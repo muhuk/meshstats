@@ -10,7 +10,7 @@ import gpu
 import gpu_extras.batch
 import mathutils
 
-from meshstats.face import FaceTri
+from meshstats.face import (FaceTri, FaceNgon)
 
 class MeshstatsPanel(bpy.types.Panel):
     bl_space_type = 'VIEW_3D'
@@ -51,23 +51,20 @@ class MeshstatsPanel(bpy.types.Panel):
         bm = bmesh.new()
         bm.from_mesh(obj.data)
 
-        tris = [f for f in bm.faces if len(f.loops) == 3]
-        quads = [f for f in bm.faces if len(f.loops) == 4]
-        ngons = [f for f in bm.faces if len(f.loops) > 4]
-
-        d['tris_count'] = len(tris)
-        d['quads_count'] = len(quads)
-        d['ngons_count'] = len(ngons)
-
         translation_matrix = mathutils.Matrix.Translation(obj.location)
         m = mathutils.Matrix(obj.matrix_world)
 
-        d['ngons'] = list([list([(m @ l.vert.co).to_tuple() for l in f.loops]) for f in ngons])
         d['tris'] = []
-        for face in tris:
-            d['tris'].append(FaceTri(*[(m @ l.vert.co) for l in face.loops]))
-        print(d['tris'])
-            
+        d['ngons'] = []
+        for face in bm.faces:
+            if len(face.loops) == 3:
+                d['tris'].append(FaceTri(*[(m @ l.vert.co) for l in face.loops]))
+            elif len(face.loops) > 4:
+                d['ngons'].append(FaceNgon([(m @ l.vert.co) for l in face.loops]))
+        d['tris_count'] = len(d['tris'])
+        d['ngons_count'] = len(d['ngons'])
+        d['quads_count'] = len(bm.faces) - d['tris_count'] - d['ngons_count']
+
         bm.free()
         duration = time.time() - start_time
         d['_update_duration'] = duration
@@ -101,12 +98,12 @@ def draw_callback(panel, color_tri, color_ngon):
     for tri in panel._data['tris']:
         batch = gpu_extras.batch.batch_for_shader(shader, 'LINE_LOOP', {"pos": tri.to_list()})
         batch.draw(shader)
-    
+
 
     shader.uniform_float("color", (color_ngon.r, color_ngon.g, color_ngon.b, 1.0))
     for ngon in panel._data['ngons']:
-        batch = gpu_extras.batch.batch_for_shader(shader, 'LINE_LOOP', {"pos": ngon})
-        batch.draw(shader)    
+        batch = gpu_extras.batch.batch_for_shader(shader, 'LINE_LOOP', {"pos": ngon.to_list()})
+        batch.draw(shader)
 
     # Reset defaults
     bgl.glLineWidth(1)

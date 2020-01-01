@@ -1,6 +1,7 @@
 # <pep8-80 compliant>
 
 from dataclasses import dataclass
+from typing import List
 
 import mathutils
 
@@ -15,5 +16,9 @@ class FaceTri:
         return [self.a, self.b, self.c]
 
 
+@dataclass
 class FaceNgon:
-    pass
+    vertices: List[mathutils.Vector]
+
+    def to_list(self):
+        return self.vertices
