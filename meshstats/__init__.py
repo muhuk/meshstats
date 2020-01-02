@@ -1,7 +1,7 @@
 # <pep8-80 compliant>
 
 import bpy
-from meshstats.ui import MeshstatsPanel
+from meshstats.ui import MainPanel, BudgetPanel
 
 
 bl_info = {
@@ -18,11 +18,13 @@ bl_info = {
 
 
 def register():
-    bpy.utils.register_class(MeshstatsPanel)
+    bpy.utils.register_class(MainPanel)
+    bpy.utils.register_class(BudgetPanel)
 
 
 def unregister():
-    bpy.utils.unregister_class(MeshstatsPanel)
+    bpy.utils.unregister_class(BudgetPanel)
+    bpy.utils.unregister_class(MainPanel)
 
 
 if __name__ == "__main__":

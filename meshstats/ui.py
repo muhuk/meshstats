@@ -10,7 +10,7 @@ import gpu_extras.batch
 from meshstats.mesh import Mesh
 
 
-class MeshstatsPanel(bpy.types.Panel):
+class MainPanel(bpy.types.Panel):
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'UI'
     bl_category = "Tool"
@@ -79,6 +79,19 @@ class MeshstatsPanel(bpy.types.Panel):
         j.label(text="???")
         j.label(text="???")
         j.label(text="???")
+
+
+class BudgetPanel(bpy.types.Panel):
+    bl_space_type = 'VIEW_3D'
+    bl_region_type = 'UI'
+    bl_category = "Tool"
+    bl_parent_id = "VIEW3D_PT_meshstats"
+
+    bl_label = "Budget"
+    bl_id_name = "VIEW3D_PT_meshstats_budget"
+
+    def draw(self, context):
+        self.layout.label(text="TODO")
 
 
 def draw_callback(panel, color_tri, color_ngon):
