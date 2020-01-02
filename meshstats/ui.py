@@ -46,10 +46,15 @@ class MainPanel(bpy.types.Panel):
         return should_draw
 
     def draw(self, context):
+        self.layout.template_ID(
+            context.view_layer.objects,
+            "active",
+            filter='AVAILABLE'
+        )
         obj = context.active_object
-        self.layout.label(text="Selected object: {}".format(obj.name))
         self._calculate_stats(obj)
         self._draw_summary_table(self.layout.box())
+        self._draw_overlay_options(context, self.layout.box())
 
     @classmethod
     def _calculate_stats(cls, obj):
@@ -88,6 +93,23 @@ class MainPanel(bpy.types.Panel):
             + cls._mesh.ngons_percentage
         ))
 
+    @classmethod
+    def _draw_overlay_options(cls, context, layout):
+        layout.label(text="Overlay Options")
+        col = layout.column(align=True)
+        col.prop(
+            context.scene.meshstats,
+            "overlay_tris",
+            icon='OVERLAY',
+            text="Show tris overlay"
+        )
+        col.prop(
+            context.scene.meshstats,
+            "overlay_ngons",
+            icon='OVERLAY',
+            text="Show ngons overlay"
+        )
+
 
 class BudgetPanel(bpy.types.Panel):
     bl_space_type = 'VIEW_3D'
@@ -107,26 +129,30 @@ def draw_callback(panel, color_tri, color_ngon):
     shader.bind()
     bgl.glLineWidth(3)
 
-    shader.uniform_float("color", (color_tri.r, color_tri.g, color_tri.b, 1.0))
-    for tri in panel._mesh.tris:
-        batch = gpu_extras.batch.batch_for_shader(
-            shader,
-            'LINE_LOOP',
-            {"pos": tri.to_list()}
-        )
-        batch.draw(shader)
+    props = bpy.context.scene.meshstats
 
-    shader.uniform_float(
-        "color",
-        (color_ngon.r, color_ngon.g, color_ngon.b, 1.0)
-    )
-    for ngon in panel._mesh.ngons:
-        batch = gpu_extras.batch.batch_for_shader(
-            shader,
-            'LINE_LOOP',
-            {"pos": ngon.to_list()}
+    if props.overlay_tris:
+        shader.uniform_float("color", (color_tri.r, color_tri.g, color_tri.b, 1.0))
+        for tri in panel._mesh.tris:
+            batch = gpu_extras.batch.batch_for_shader(
+                shader,
+                'LINE_LOOP',
+                {"pos": tri.to_list()}
+            )
+            batch.draw(shader)
+
+    if props.overlay_ngons:
+        shader.uniform_float(
+            "color",
+            (color_ngon.r, color_ngon.g, color_ngon.b, 1.0)
         )
-        batch.draw(shader)
+        for ngon in panel._mesh.ngons:
+            batch = gpu_extras.batch.batch_for_shader(
+                shader,
+                'LINE_LOOP',
+                {"pos": ngon.to_list()}
+            )
+            batch.draw(shader)
 
     # Reset defaults
     bgl.glLineWidth(1)
