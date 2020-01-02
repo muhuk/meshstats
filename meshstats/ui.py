@@ -49,7 +49,7 @@ class MainPanel(bpy.types.Panel):
         obj = context.active_object
         self.layout.label(text="Selected object: {}".format(obj.name))
         self._calculate_stats(obj)
-        self._draw_summary_table(self.layout)
+        self._draw_summary_table(self.layout.box())
 
     @classmethod
     def _calculate_stats(cls, obj):
@@ -64,21 +64,29 @@ class MainPanel(bpy.types.Panel):
 
     @classmethod
     def _draw_summary_table(cls, layout):
+        layout.label(text="Face Count")
         j = layout.grid_flow(columns=3)
         j.label(text="")
         j.label(text="Tris")
         j.label(text="Quads")
         j.label(text="Ngons")
+        j.label(text="Total")
 
         j.label(text="count")
         j.label(text="{}".format(cls._mesh.tris_count))
         j.label(text="{}".format(cls._mesh.quads_count))
         j.label(text="{}".format(cls._mesh.ngons_count))
+        j.label(text="{}".format(cls._mesh.face_count))
 
         j.label(text="percentage")
-        j.label(text="???")
-        j.label(text="???")
-        j.label(text="???")
+        j.label(text="{}%".format(cls._mesh.tris_percentage))
+        j.label(text="{}%".format(cls._mesh.quads_percentage))
+        j.label(text="{}%".format(cls._mesh.ngons_percentage))
+        j.label(text="{}%".format(
+            cls._mesh.tris_percentage
+            + cls._mesh.quads_percentage
+            + cls._mesh.ngons_percentage
+        ))
 
 
 class BudgetPanel(bpy.types.Panel):
