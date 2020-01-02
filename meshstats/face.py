@@ -6,7 +6,7 @@ from typing import List
 import mathutils
 
 
-@dataclass
+@dataclass(frozen=True)
 class FaceTri:
     a: mathutils.Vector
     b: mathutils.Vector
@@ -16,7 +16,7 @@ class FaceTri:
         return [self.a, self.b, self.c]
 
 
-@dataclass
+@dataclass(frozen=True)
 class FaceNgon:
     vertices: List[mathutils.Vector]
 
