@@ -13,7 +13,7 @@ from meshstats.mesh import Mesh
 class MainPanel(bpy.types.Panel):
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'UI'
-    bl_category = "Tool"
+    bl_category = "Item"
 
     bl_idname = "VIEW3D_PT_meshstats"
     bl_label = "Meshstats"
@@ -92,7 +92,7 @@ class MainPanel(bpy.types.Panel):
 class BudgetPanel(bpy.types.Panel):
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'UI'
-    bl_category = "Tool"
+    bl_category = "Item"
     bl_parent_id = "VIEW3D_PT_meshstats"
 
     bl_label = "Budget"
