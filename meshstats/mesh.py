@@ -99,3 +99,6 @@ class Mesh:
         self.tris_percentage = 0
         self.quads_percentage = 0
         self.ngons_percentage = 0
+
+
+cache = Mesh()

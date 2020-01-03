@@ -2,12 +2,10 @@
 
 import time
 
-import bgl
 import bpy
-import gpu
-import gpu_extras.batch
 
-from meshstats.mesh import Mesh
+from meshstats.mesh import cache as mesh_cache
+from meshstats.overlay import draw_callback
 
 
 class MainPanel(bpy.types.Panel):
@@ -19,7 +17,6 @@ class MainPanel(bpy.types.Panel):
     bl_label = "Meshstats"
 
     _draw_handler = None
-    _mesh = Mesh()
 
     @classmethod
     def poll(cls, context):
@@ -39,7 +36,7 @@ class MainPanel(bpy.types.Panel):
             color_ngon = context.preferences.themes[0].view_3d.extra_face_angle
             cls._draw_handler = bpy.types.SpaceView3D.draw_handler_add(
                 draw_callback,
-                (cls, color_tri, color_ngon),
+                (color_tri, color_ngon),
                 'WINDOW',
                 'POST_VIEW'
             )
@@ -59,7 +56,7 @@ class MainPanel(bpy.types.Panel):
     @classmethod
     def _calculate_stats(cls, obj):
         start_time = time.time()
-        cls._mesh(obj)
+        mesh_cache(obj)
         duration = time.time() - start_time
         # d['_update_duration'] = duration
         print("calculated stats for '{}' in {:.4f} seconds".format(
@@ -78,19 +75,19 @@ class MainPanel(bpy.types.Panel):
         j.label(text="Total")
 
         j.label(text="count")
-        j.label(text="{}".format(cls._mesh.tris_count))
-        j.label(text="{}".format(cls._mesh.quads_count))
-        j.label(text="{}".format(cls._mesh.ngons_count))
-        j.label(text="{}".format(cls._mesh.face_count))
+        j.label(text="{}".format(mesh_cache.tris_count))
+        j.label(text="{}".format(mesh_cache.quads_count))
+        j.label(text="{}".format(mesh_cache.ngons_count))
+        j.label(text="{}".format(mesh_cache.face_count))
 
         j.label(text="percentage")
-        j.label(text="{}%".format(cls._mesh.tris_percentage))
-        j.label(text="{}%".format(cls._mesh.quads_percentage))
-        j.label(text="{}%".format(cls._mesh.ngons_percentage))
+        j.label(text="{}%".format(mesh_cache.tris_percentage))
+        j.label(text="{}%".format(mesh_cache.quads_percentage))
+        j.label(text="{}%".format(mesh_cache.ngons_percentage))
         j.label(text="{}%".format(
-            cls._mesh.tris_percentage
-            + cls._mesh.quads_percentage
-            + cls._mesh.ngons_percentage
+            mesh_cache.tris_percentage
+            + mesh_cache.quads_percentage
+            + mesh_cache.ngons_percentage
         ))
 
     @classmethod
@@ -122,37 +119,3 @@ class BudgetPanel(bpy.types.Panel):
 
     def draw(self, context):
         self.layout.label(text="TODO")
-
-
-def draw_callback(panel, color_tri, color_ngon):
-    shader = gpu.shader.from_builtin('3D_UNIFORM_COLOR')
-    shader.bind()
-    bgl.glLineWidth(3)
-
-    props = bpy.context.scene.meshstats
-
-    if props.overlay_tris:
-        shader.uniform_float("color", (color_tri.r, color_tri.g, color_tri.b, 1.0))
-        for tri in panel._mesh.tris:
-            batch = gpu_extras.batch.batch_for_shader(
-                shader,
-                'LINE_LOOP',
-                {"pos": tri.to_list()}
-            )
-            batch.draw(shader)
-
-    if props.overlay_ngons:
-        shader.uniform_float(
-            "color",
-            (color_ngon.r, color_ngon.g, color_ngon.b, 1.0)
-        )
-        for ngon in panel._mesh.ngons:
-            batch = gpu_extras.batch.batch_for_shader(
-                shader,
-                'LINE_LOOP',
-                {"pos": ngon.to_list()}
-            )
-            batch.draw(shader)
-
-    # Reset defaults
-    bgl.glLineWidth(1)
