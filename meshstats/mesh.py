@@ -35,16 +35,23 @@ class Mesh:
         bm = bmesh.new()
         bm.from_mesh(obj.data)
         m = mathutils.Matrix(obj.matrix_world)
+        bm.transform(m)
 
         for face in bm.faces:
             if len(face.loops) == 3:
+                [a, b, c] = [l.vert.co for l in face.loops]
                 self.tris.append(
-                    FaceTri(*[(m @ l.vert.co) for l in face.loops])
+                    FaceTri(a, b, c, face.normal)
                 )
+                del a, b, c
             elif len(face.loops) > 4:
                 self.ngons.append(
-                    FaceNgon([(m @ l.vert.co) for l in face.loops])
+                    FaceNgon(
+                        [l.vert.co for l in face.loops],
+                        face.normal
+                    )
                 )
+
         self.face_count = len(bm.faces)
         self._update_counts()
         self._update_percentages()

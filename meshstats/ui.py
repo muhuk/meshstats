@@ -32,11 +32,9 @@ class MainPanel(bpy.types.Panel):
             cls._draw_handler = None
         elif should_draw and cls._draw_handler is None:
             print("adding handler")
-            color_tri = context.preferences.themes[0].view_3d.extra_face_area
-            color_ngon = context.preferences.themes[0].view_3d.extra_face_angle
             cls._draw_handler = bpy.types.SpaceView3D.draw_handler_add(
                 draw_callback,
-                (color_tri, color_ngon),
+                (),
                 'WINDOW',
                 'POST_VIEW'
             )
@@ -114,8 +112,8 @@ class BudgetPanel(bpy.types.Panel):
     bl_category = "Item"
     bl_parent_id = "VIEW3D_PT_meshstats"
 
-    bl_label = "Budget"
     bl_id_name = "VIEW3D_PT_meshstats_budget"
+    bl_label = "Budget"
 
     def draw(self, context):
         self.layout.label(text="TODO")
