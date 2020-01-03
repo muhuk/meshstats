@@ -5,7 +5,6 @@ import time
 import bpy
 
 from meshstats.mesh import cache as mesh_cache
-from meshstats.overlay import draw_callback
 
 
 class MainPanel(bpy.types.Panel):
@@ -16,29 +15,11 @@ class MainPanel(bpy.types.Panel):
     bl_idname = "VIEW3D_PT_meshstats"
     bl_label = "Meshstats"
 
-    _draw_handler = None
-
     @classmethod
     def poll(cls, context):
-        should_draw = context.mode == 'OBJECT' \
+        return context.mode == 'OBJECT' \
             and context.selected_objects \
             and context.active_object.type == 'MESH'
-        if not should_draw and cls._draw_handler is not None:
-            print("removing handler")
-            bpy.types.SpaceView3D.draw_handler_remove(
-                cls._draw_handler,
-                'WINDOW'
-            )
-            cls._draw_handler = None
-        elif should_draw and cls._draw_handler is None:
-            print("adding handler")
-            cls._draw_handler = bpy.types.SpaceView3D.draw_handler_add(
-                draw_callback,
-                (),
-                'WINDOW',
-                'POST_VIEW'
-            )
-        return should_draw
 
     def draw(self, context):
         self.layout.template_ID(

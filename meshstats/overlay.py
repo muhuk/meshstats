@@ -15,11 +15,13 @@ from meshstats.face import Face
 from meshstats.mesh import cache as mesh_cache
 
 
+shader = gpu.shader.from_builtin('3D_UNIFORM_COLOR')
+
+
 def draw_callback():
     color_tri = bpy.context.preferences.themes[0].view_3d.extra_face_area
     color_ngon = bpy.context.preferences.themes[0].view_3d.extra_face_angle
 
-    shader = gpu.shader.from_builtin('3D_UNIFORM_COLOR')
     shader.bind()
     bgl.glLineWidth(3)
 

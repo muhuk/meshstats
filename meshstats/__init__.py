@@ -1,6 +1,8 @@
 # <pep8-80 compliant>
 
 import bpy
+
+from meshstats.overlay import draw_callback
 from meshstats.props import MeshstatsProperties
 from meshstats.ui import MainPanel, BudgetPanel
 
@@ -18,7 +20,12 @@ bl_info = {
 }
 
 
+draw_handler = None
+
+
 def register():
+    global draw_handler
+
     bpy.utils.register_class(MeshstatsProperties)
     bpy.types.Scene.meshstats = bpy.props.PointerProperty(
         type=MeshstatsProperties
@@ -27,8 +34,17 @@ def register():
     bpy.utils.register_class(MainPanel)
     bpy.utils.register_class(BudgetPanel)
 
+    draw_handler = bpy.types.SpaceView3D.draw_handler_add(
+        draw_callback,
+        (),
+        'WINDOW',
+        'POST_VIEW'
+    )
+
 
 def unregister():
+    bpy.types.SpaceView3D.draw_handler_remove(draw_handler, 'WINDOW')
+
     bpy.utils.unregister_class(BudgetPanel)
     bpy.utils.unregister_class(MainPanel)
 
