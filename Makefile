@@ -12,6 +12,7 @@ ZIP_DIR = $(BUILD_DIR)/$(PACKAGE_NAME)
 build:
 	@mkdir -p $(BUILD_DIR)/$(PACKAGE_NAME)
 	@rsync -av --exclude="__pycache__" ./$(SOURCE_DIR) $(BUILD_DIR)/$(PACKAGE_NAME)
+	@cp COPYING.txt $(BUILD_DIR)/$(PACKAGE_NAME)/$(SOURCE_DIR)
 	@cd $(BUILD_DIR)/$(PACKAGE_NAME); zip -r "$(PACKAGE_NAME).zip" $(SOURCE_DIR)
 	@mv $(BUILD_DIR)/$(PACKAGE_NAME)/$(PACKAGE_NAME).zip $(BUILD_DIR)/
 	@echo "Created '$(BUILD_DIR)/$(PACKAGE_NAME)/$(PACKAGE_NAME).zip'"
