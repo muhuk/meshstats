@@ -16,7 +16,7 @@ bl_info = {
     "version": (0, 1),
     "blender": (2, 81, 0),
     "location": "View3D > Meshstats panel",
-    "tracker_url": "https://github.com/muhuk",  # TODO: Fix this
+    "tracker_url": "https://github.com/muhuk/meshstats",
     "support": "COMMUNITY",
     "category": "Mesh"
 }
