@@ -2,6 +2,8 @@
 
 import bpy
 
+from meshstats.mesh import app__depsgraph_update_post
+from meshstats.mesh import app__load_pre_handler
 from meshstats.overlay import draw_callback
 from meshstats.props import MeshstatsProperties
 from meshstats.ui import MainPanel, BudgetPanel
@@ -25,6 +27,9 @@ draw_handler = None
 
 def register():
     global draw_handler
+
+    bpy.app.handlers.load_pre.append(app__load_pre_handler)
+    bpy.app.handlers.depsgraph_update_post.append(app__depsgraph_update_post)
 
     bpy.utils.register_class(MeshstatsProperties)
     bpy.types.Scene.meshstats = bpy.props.PointerProperty(
@@ -50,6 +55,10 @@ def unregister():
 
     del bpy.types.Scene.meshstats
     bpy.utils.unregister_class(MeshstatsProperties)
+
+    bpy.app.handlers.load_pre.remove(app__load_pre_handler)
+    bpy.app.handlers.depsgraph_update_post.remove(app__depsgraph_update_post)
+
 
 
 if __name__ == "__main__":

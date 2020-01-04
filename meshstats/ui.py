@@ -1,10 +1,9 @@
 # <pep8-80 compliant>
 
-import time
-
 import bpy
 
-from meshstats.mesh import cache as mesh_cache
+from meshstats import mesh
+from meshstats.context import get_object
 
 
 class MainPanel(bpy.types.Panel):
@@ -17,9 +16,7 @@ class MainPanel(bpy.types.Panel):
 
     @classmethod
     def poll(cls, context):
-        return context.mode == 'OBJECT' \
-            and context.selected_objects \
-            and context.active_object.type == 'MESH'
+        return get_object(context) is not None
 
     def draw(self, context):
         self.layout.template_ID(
@@ -27,24 +24,17 @@ class MainPanel(bpy.types.Panel):
             "active",
             filter='AVAILABLE'
         )
-        obj = context.active_object
-        self._calculate_stats(obj)
-        self._draw_summary_table(self.layout.box())
-        self._draw_overlay_options(context, self.layout.box())
-
-    @classmethod
-    def _calculate_stats(cls, obj):
-        start_time = time.time()
-        mesh_cache(obj)
-        duration = time.time() - start_time
-        # d['_update_duration'] = duration
-        print("calculated stats for '{}' in {:.4f} seconds".format(
-            obj.name,
-            duration
-        ))
+        if mesh.get_cache() is not None:
+            self._draw_summary_table(self.layout.box())
+            self._draw_overlay_options(context, self.layout.box())
+        else:
+            self.layout.alert = True
+            self.layout.label(text="Calculating...")
+            self.layout.alert = False
 
     @classmethod
     def _draw_summary_table(cls, layout):
+        mesh_cache = mesh.get_cache()
         layout.label(text="Face Count")
         j = layout.grid_flow(columns=3)
         j.label(text="")

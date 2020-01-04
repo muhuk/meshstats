@@ -1,16 +1,21 @@
 # <pep8-80 compliant>
 
+import copy
 import dataclasses
 import typing
 
 import bmesh
+import bpy
 import mathutils
 
+from meshstats.context import get_object
 from meshstats.face import FaceTri, FaceNgon
 
 
 @dataclasses.dataclass(eq=False)
 class Mesh:
+    obj: bpy.types.Object
+
     tris: typing.List[FaceTri] = dataclasses.field(
         init=False,
         default_factory=list
@@ -29,26 +34,26 @@ class Mesh:
     quads_percentage: int = dataclasses.field(init=False, default=0)
     ngons_percentage: int = dataclasses.field(init=False, default=0)
 
-    def __call__(self, obj):
+    def __post_init__(self):
         self._reset()
 
         bm = bmesh.new()
-        bm.from_mesh(obj.data)
-        m = mathutils.Matrix(obj.matrix_world)
+        bm.from_mesh(self.obj.data)
+        m = mathutils.Matrix(self.obj.matrix_world)
         bm.transform(m)
 
         for face in bm.faces:
             if len(face.loops) == 3:
-                [a, b, c] = [l.vert.co for l in face.loops]
+                [a, b, c] = [copy.deepcopy(l.vert.co) for l in face.loops]
                 self.tris.append(
-                    FaceTri(a, b, c, face.normal)
+                    FaceTri(a, b, c, copy.deepcopy(face.normal))
                 )
                 del a, b, c
             elif len(face.loops) > 4:
                 self.ngons.append(
                     FaceNgon(
-                        [l.vert.co for l in face.loops],
-                        face.normal
+                        [copy.deepcopy(l.vert.co) for l in face.loops],
+                        copy.deepcopy(face.normal)
                     )
                 )
 
@@ -108,4 +113,24 @@ class Mesh:
         self.ngons_percentage = 0
 
 
-cache = Mesh()
+cache: typing.Optional[Mesh] = None
+
+
+def get_cache():
+    return cache
+
+
+@bpy.app.handlers.persistent
+def app__load_pre_handler():
+    global cache
+    cache = None
+
+
+@bpy.app.handlers.persistent
+def app__depsgraph_update_post(scene, depsgraph):
+    global cache
+    if get_object():
+        cache = Mesh(bpy.context.active_object)
+        print("updated mesh cache to {}".format(bpy.context.active_object))
+    else:
+        cache = None
