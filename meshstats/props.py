@@ -19,14 +19,43 @@
 import bpy
 
 
+class MeshstatsAddonPreferences(bpy.types.AddonPreferences):
+    bl_idname = __package__
+
+    overlay_tris_color = bpy.props.FloatVectorProperty(
+        name="overlay_tris_color",
+        description="Color to be used to draw overlay of tris in 3D view.",
+        default=(1.0, 0.0, 1.0, 0.3),
+        subtype='COLOR',
+        size=4,
+        min=0.0,
+        max=1.0
+    )
+    overlay_ngons_color = bpy.props.FloatVectorProperty(
+        name="overlay_ngons_color",
+        description="Color to be used to draw overlay of ngons in 3D view.",
+        default=(0.0, 1.0, 1.0, 0.3),
+        subtype='COLOR',
+        size=4,
+        min=0.0,
+        max=1.0
+    )
+
+    def draw(self, context):
+        layout = self.layout
+        layout.label(text="Overlay Preferences")
+        layout.prop(self, "overlay_tris_color")
+        layout.prop(self, "overlay_ngons_color")
+
+
 class MeshstatsProperties(bpy.types.PropertyGroup):
     overlay_tris: bpy.props.BoolProperty(
         name="overlay_tris",
-        description="Display an overlay of tris.",
+        description="Toggle overlay of tris.",
         default=False
     )
     overlay_ngons: bpy.props.BoolProperty(
         name="overlay_ngons",
-        description="Display an overlay of ngons.",
+        description="Toggle overlay of ngons.",
         default=False
     )

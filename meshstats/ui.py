@@ -77,20 +77,36 @@ class MainPanel(bpy.types.Panel):
 
     @classmethod
     def _draw_overlay_options(cls, context, layout):
+        addon_prefs = context.preferences.addons[__package__].preferences
+
         layout.label(text="Overlay Options")
         col = layout.column(align=True)
         col.prop(
             context.scene.meshstats,
             "overlay_tris",
             icon='OVERLAY',
-            text="Show tris overlay"
+            text="Overlay tris"
         )
+        if context.scene.meshstats["overlay_tris"]:
+            col.prop(
+                addon_prefs,
+                "overlay_tris_color",
+                text=""
+            )
+
+        col = layout.column(align=True)
         col.prop(
             context.scene.meshstats,
             "overlay_ngons",
             icon='OVERLAY',
-            text="Show ngons overlay"
+            text="Overlay ngons"
         )
+        if context.scene.meshstats["overlay_ngons"]:
+            col.prop(
+                addon_prefs,
+                "overlay_ngons_color",
+                text=""
+            )
 
 
 class BudgetPanel(bpy.types.Panel):
