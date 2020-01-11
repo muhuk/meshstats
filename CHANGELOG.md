@@ -2,6 +2,9 @@
 
 ## [Unreleased]
 
+### Added
+- Customization of colors (with alpha) in overlay.
+
 ## [0.1] - 2020-01-04
 
 ### Added
