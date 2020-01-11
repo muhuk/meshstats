@@ -25,7 +25,6 @@ from bpy_extras.view3d_utils import location_3d_to_region_2d
 from bpy_extras.view3d_utils import region_2d_to_origin_3d
 import gpu
 import gpu_extras.batch
-import mathutils
 
 from meshstats.face import Face
 from meshstats import mesh
@@ -38,8 +37,9 @@ def draw_callback():
     mesh_cache = mesh.get_cache()
     if mesh_cache is None:
         return
-    color_tri = bpy.context.preferences.themes[0].view_3d.extra_face_area
-    color_ngon = bpy.context.preferences.themes[0].view_3d.extra_face_angle
+    addon_prefs = bpy.context.preferences.addons[__package__].preferences
+    color_tri = addon_prefs.overlay_tris_color
+    color_ngon = addon_prefs.overlay_ngons_color
 
     shader.bind()
 
@@ -92,10 +92,10 @@ def _is_visible(face: Face, epsilon: float = 0.00001) -> bool:
 
 def _draw_overlay_faces(
         shader: gpu.types.GPUShader,
-        color: mathutils.Color,
+        color: (float, float, float, float),
         faces: List[Face]
 ):
-    shader.uniform_float("color", (color.r, color.g, color.b, 1.0))
+    shader.uniform_float("color", color)
     for face in filter(_is_visible, faces):
         batch = gpu_extras.batch.batch_for_shader(
             shader,
@@ -103,7 +103,9 @@ def _draw_overlay_faces(
             {"pos": face.to_list()}
         )
         batch.draw(shader)
-    shader.uniform_float("color", (color.r, color.g, color.b, 0.333))
+    faded_alpha = min(color[3] * 0.15 + 0.1, color[3])
+    faded_color = (color[0], color[1], color[2], faded_alpha)
+    shader.uniform_float("color", faded_color)
     for face in filter(lambda f: not _is_visible(f), faces):
         batch = gpu_extras.batch.batch_for_shader(
             shader,
