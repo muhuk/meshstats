@@ -5,6 +5,12 @@
 ### Added
 - Customization of colors (with alpha) in overlay.
 
+### Fixed
+- Fixed visibility check for ngons.  When face center was not on the surface
+  (when vertices are not co-planar) visibility check was always returning
+  `False`.  Fix involves projecting the calculated center onto the mesh and
+  using that as the ngon center.
+
 ## [0.1] - 2020-01-04
 
 ### Added

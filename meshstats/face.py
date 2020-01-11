@@ -18,7 +18,6 @@
 
 import abc
 from dataclasses import dataclass
-from functools import reduce
 from typing import List
 
 import mathutils
@@ -52,9 +51,10 @@ class FaceTri(Face):
 class FaceNgon(Face):
     vertices: List[mathutils.Vector]
     normal: mathutils.Vector
+    _center: mathutils.Vector
 
     def center(self):
-        return reduce(lambda a, b: a + b, self.vertices) / len(self.vertices)
+        return self._center
 
     def to_list(self):
         return self.vertices

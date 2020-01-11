@@ -18,6 +18,7 @@
 
 import copy
 import dataclasses
+from functools import reduce
 import typing
 
 import bmesh
@@ -57,6 +58,7 @@ class Mesh:
         bm.from_mesh(self.obj.data)
         m = mathutils.Matrix(self.obj.matrix_world)
         bm.transform(m)
+        m_inverted = m.inverted()
 
         for face in bm.faces:
             if len(face.loops) == 3:
@@ -66,12 +68,24 @@ class Mesh:
                 )
                 del a, b, c
             elif len(face.loops) > 4:
+                vertices = [copy.deepcopy(l.vert.co) for l in face.loops]
+                # vertices are in world coords so we need to transform center
+                # to object coords first to be able to call
+                # closest_point_on_mesh then convert back to world coords.
+                center = reduce(lambda a, b: a + b, vertices) / len(vertices)
+                center = m_inverted @ center
+                center = mathutils.Vector(
+                    self.obj.closest_point_on_mesh(center)[1]
+                )
+                center = m @ center
                 self.ngons.append(
                     FaceNgon(
-                        [copy.deepcopy(l.vert.co) for l in face.loops],
-                        copy.deepcopy(face.normal)
+                        vertices,
+                        copy.deepcopy(face.normal),
+                        center
                     )
                 )
+                del vertices, center
 
         self.face_count = len(bm.faces)
         self._update_counts()
