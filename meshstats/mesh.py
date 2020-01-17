@@ -46,6 +46,7 @@ class Mesh:
     tris_count: int = dataclasses.field(init=False, default=0)
     quads_count: int = dataclasses.field(init=False, default=0)
     ngons_count: int = dataclasses.field(init=False, default=0)
+    tesellated_tris_count: int = dataclasses.field(init=False, default=0)
 
     tris_percentage: int = dataclasses.field(init=False, default=0)
     quads_percentage: int = dataclasses.field(init=False, default=0)
@@ -87,11 +88,32 @@ class Mesh:
                 )
                 del vertices, center
 
+        self.tesellated_tris_count = len(bm.calc_loop_triangles())
+
         self.face_count = len(bm.faces)
         self._update_counts()
         self._update_percentages()
 
         bm.free()
+
+    @property
+    def face_budget_utilization(self):
+        if self.obj.meshstats.face_budget_on:
+            props = self.obj.meshstats
+            if props.face_budget_type == 'TRIS':
+                return float(self.tesellated_tris_count) / props.face_budget
+            elif props.face_budget_type == 'QUADS_ONLY':
+                return float(self.quads_count) / props.face_budget
+            elif props.face_budget_type == 'FACES':
+                return float(self.face_count) / props.face_budget
+            else:
+                raise RuntimeError(
+                    "Unknown face_budget_type {}".format(
+                        props.face_budget_type
+                    )
+                )
+        else:
+            return None
 
     def _update_counts(self):
         self.tris_count = len(self.tris)

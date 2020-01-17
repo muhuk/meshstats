@@ -66,12 +66,18 @@ class MeshstatsObjectProperties(bpy.types.PropertyGroup):
     )
 
     face_budget_type: bpy.props.EnumProperty(
-        name="face_buget_type",
+        name="face_budget_type",
         description="Whether to cound tris or quads",
         default='TRIS',
         items=[
             ('TRIS', "Tris", "Count triangulated faces", 1),
-            ('QUADS', "Quads", "Count only quads", 2)
+            ('QUADS_ONLY', "Quads Only", "Count only quads", 2),
+            (
+                'FACES',
+                "Faces",
+                "Count of any kind of faces, including ngons",
+                3
+            ),
         ]
     )
 

@@ -53,19 +53,23 @@ class MainPanel(bpy.types.Panel):
     def _draw_budget(context, layout):
         obj = get_object(context)
         props = obj.meshstats
+        mesh_cache = mesh.get_cache()
 
         layout.label(text="Budget")
         col = layout.column(align=True)
         col.prop(
             props,
             "face_budget_on",
-            icon='OVERLAY',
+            icon='FACESEL',
             text="Face Budget"
         )
         if props.face_budget_on:
             row = col.row(align=True)
             row.prop(props, "face_budget", text="Budget")
             row.prop(props, "face_budget_type", text="")
+            col.label(text="Utilization is {:.2%}.".format(
+                mesh_cache.face_budget_utilization
+            ))
 
     @staticmethod
     def _draw_summary_table(layout):
