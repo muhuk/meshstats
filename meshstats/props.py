@@ -48,7 +48,7 @@ class MeshstatsAddonPreferences(bpy.types.AddonPreferences):
         layout.prop(self, "overlay_ngons_color")
 
 
-class MeshstatsProperties(bpy.types.PropertyGroup):
+class MeshstatsSceneProperties(bpy.types.PropertyGroup):
     overlay_tris: bpy.props.BoolProperty(
         name="overlay_tris",
         description="Toggle overlay of tris.",
