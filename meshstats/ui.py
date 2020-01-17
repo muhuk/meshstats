@@ -42,8 +42,8 @@ class MainPanel(bpy.types.Panel):
         )
         if mesh.get_cache() is not None:
             self._draw_summary_table(self.layout.box())
-            self._draw_overlay_options(context, self.layout.box())
             self._draw_budget(context, self.layout.box())
+            self._draw_overlay_options(context, self.layout.box())
         else:
             self.layout.alert = True
             self.layout.label(text="Calculating...")
@@ -55,12 +55,17 @@ class MainPanel(bpy.types.Panel):
         props = obj.meshstats
 
         layout.label(text="Budget")
+        col = layout.column(align=True)
+        col.prop(
+            props,
+            "face_budget_on",
+            icon='OVERLAY',
+            text="Face Budget"
+        )
         if props.face_budget_on:
-            layout.prop(props, "face_budget_on")
-            layout.prop(props, "face_budget")
-            layout.prop(props, "face_budget_type")
-        else:
-            layout.prop(props, "face_budget_on")
+            row = col.row(align=True)
+            row.prop(props, "face_budget", text="Budget")
+            row.prop(props, "face_budget_type", text="")
 
     @staticmethod
     def _draw_summary_table(layout):
