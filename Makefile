@@ -1,13 +1,17 @@
 NAME = "meshstats"
-SOURCE_DIR = $(NAME)
 VERSION = $(shell ack "\"version\":\s*\((\d+),\s*(\d+)\)" meshstats/__init__.py --output="\$$1.\$$2" --nocolor)
 PACKAGE_NAME = $(NAME)-$(VERSION)
+
+SOURCE_DIR = $(NAME)
 BUILD_DIR = ./release
+SCRIPTS_DIR = ./scripts
 ZIP_DIR = $(BUILD_DIR)/$(PACKAGE_NAME)
+
+BLENDER_PATH = ~/lib/blender-2.81a-linux-glibc217-x86_64
 
 .DEFAULT_GOAL  := build
 
-.PHONY: clean build relase tag version
+.PHONY: clean build relase run tag version
 
 build:
 	@mkdir -p $(BUILD_DIR)/$(PACKAGE_NAME)
@@ -15,13 +19,22 @@ build:
 	@cp COPYING.txt $(BUILD_DIR)/$(PACKAGE_NAME)/$(SOURCE_DIR)
 	@cd $(BUILD_DIR)/$(PACKAGE_NAME); zip -r "$(PACKAGE_NAME).zip" $(SOURCE_DIR)
 	@mv $(BUILD_DIR)/$(PACKAGE_NAME)/$(PACKAGE_NAME).zip $(BUILD_DIR)/
-	@echo "Created '$(BUILD_DIR)/$(PACKAGE_NAME)/$(PACKAGE_NAME).zip'"
+	@echo "Created '$(BUILD_DIR)/$(PACKAGE_NAME).zip'"
 
 clean:
 	@rm -rf $(BUILD_DIR)
 	@echo "Deleted $(BUILD_DIR)"
 
 release: clean version build tag
+	@echo "Done"
+
+run: clean build
+	ZIP_FILE=`realpath "$(BUILD_DIR)/$(PACKAGE_NAME).zip"` \
+	$(BLENDER_PATH)/blender -d \
+		--debug-python \
+		--factory-startup \
+		-P $(SCRIPTS_DIR)/install_addon.py \
+		./dev.blend
 	@echo "Done"
 
 tag:
