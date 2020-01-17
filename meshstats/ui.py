@@ -43,13 +43,27 @@ class MainPanel(bpy.types.Panel):
         if mesh.get_cache() is not None:
             self._draw_summary_table(self.layout.box())
             self._draw_overlay_options(context, self.layout.box())
+            self._draw_budget(context, self.layout.box())
         else:
             self.layout.alert = True
             self.layout.label(text="Calculating...")
             self.layout.alert = False
 
-    @classmethod
-    def _draw_summary_table(cls, layout):
+    @staticmethod
+    def _draw_budget(context, layout):
+        obj = get_object(context)
+        props = obj.meshstats
+
+        layout.label(text="Budget")
+        if props.face_budget_on:
+            layout.prop(props, "face_budget_on")
+            layout.prop(props, "face_budget")
+            layout.prop(props, "face_budget_type")
+        else:
+            layout.prop(props, "face_budget_on")
+
+    @staticmethod
+    def _draw_summary_table(layout):
         mesh_cache = mesh.get_cache()
         layout.label(text="Face Count")
         j = layout.grid_flow(columns=3)
@@ -75,8 +89,8 @@ class MainPanel(bpy.types.Panel):
             + mesh_cache.ngons_percentage
         ))
 
-    @classmethod
-    def _draw_overlay_options(cls, context, layout):
+    @staticmethod
+    def _draw_overlay_options(context, layout):
         addon_prefs = context.preferences.addons[__package__].preferences
 
         layout.label(text="Overlay Options")
@@ -107,25 +121,3 @@ class MainPanel(bpy.types.Panel):
                 "overlay_ngons_color",
                 text=""
             )
-
-
-class BudgetPanel(bpy.types.Panel):
-    bl_space_type = 'VIEW_3D'
-    bl_region_type = 'UI'
-    bl_category = "Item"
-    bl_parent_id = "VIEW3D_PT_meshstats"
-
-    bl_id_name = "VIEW3D_PT_meshstats_budget"
-    bl_label = "Budget"
-
-    def draw(self, context):
-        obj = get_object(context)
-        props = obj.meshstats
-
-        self.layout.label(text="TODO")
-        if props.face_budget_on:
-            self.layout.prop(props, "face_budget_on")
-            self.layout.prop(props, "face_budget")
-            self.layout.prop(props, "face_budget_type")
-        else:
-            self.layout.prop(props, "face_budget_on")

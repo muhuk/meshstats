@@ -24,7 +24,7 @@ from meshstats.overlay import draw_callback
 from meshstats.props import MeshstatsAddonPreferences
 from meshstats.props import MeshstatsObjectProperties
 from meshstats.props import MeshstatsSceneProperties
-from meshstats.ui import MainPanel, BudgetPanel
+from meshstats.ui import MainPanel
 
 
 bl_info = {
@@ -59,7 +59,6 @@ def register():
 
     # Register UI
     bpy.utils.register_class(MainPanel)
-    bpy.utils.register_class(BudgetPanel)
 
     # Register Handlers
     bpy.app.handlers.load_pre.append(app__load_pre_handler)
@@ -79,7 +78,6 @@ def unregister():
     bpy.app.handlers.depsgraph_update_post.remove(app__depsgraph_update_post)
 
     # Unregaister UI
-    bpy.utils.unregister_class(BudgetPanel)
     bpy.utils.unregister_class(MainPanel)
 
     # Unregister Props
@@ -88,7 +86,6 @@ def unregister():
     del bpy.types.Scene.meshstats
     bpy.utils.unregister_class(MeshstatsSceneProperties)
     bpy.utils.unregister_class(MeshstatsAddonPreferences)
-
 
 
 if __name__ == "__main__":
