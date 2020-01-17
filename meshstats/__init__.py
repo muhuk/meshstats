@@ -22,6 +22,7 @@ from meshstats.mesh import app__depsgraph_update_post
 from meshstats.mesh import app__load_pre_handler
 from meshstats.overlay import draw_callback
 from meshstats.props import MeshstatsAddonPreferences
+from meshstats.props import MeshstatsObjectProperties
 from meshstats.props import MeshstatsSceneProperties
 from meshstats.ui import MainPanel, BudgetPanel
 
@@ -45,18 +46,24 @@ draw_handler = None
 def register():
     global draw_handler
 
-    bpy.app.handlers.load_pre.append(app__load_pre_handler)
-    bpy.app.handlers.depsgraph_update_post.append(app__depsgraph_update_post)
-
+    # Register Props
     bpy.utils.register_class(MeshstatsAddonPreferences)
     bpy.utils.register_class(MeshstatsSceneProperties)
     bpy.types.Scene.meshstats = bpy.props.PointerProperty(
         type=MeshstatsSceneProperties
     )
+    bpy.utils.register_class(MeshstatsObjectProperties)
+    bpy.types.Object.meshstats = bpy.props.PointerProperty(
+        type=MeshstatsObjectProperties
+    )
 
+    # Register UI
     bpy.utils.register_class(MainPanel)
     bpy.utils.register_class(BudgetPanel)
 
+    # Register Handlers
+    bpy.app.handlers.load_pre.append(app__load_pre_handler)
+    bpy.app.handlers.depsgraph_update_post.append(app__depsgraph_update_post)
     draw_handler = bpy.types.SpaceView3D.draw_handler_add(
         draw_callback,
         (),
@@ -66,17 +73,21 @@ def register():
 
 
 def unregister():
+    # Unregister Handlers
     bpy.types.SpaceView3D.draw_handler_remove(draw_handler, 'WINDOW')
+    bpy.app.handlers.load_pre.remove(app__load_pre_handler)
+    bpy.app.handlers.depsgraph_update_post.remove(app__depsgraph_update_post)
 
+    # Unregaister UI
     bpy.utils.unregister_class(BudgetPanel)
     bpy.utils.unregister_class(MainPanel)
 
+    # Unregister Props
+    del bpy.types.Object.meshstats
+    bpy.utils.unregister_class(MeshstatsObjectProperties)
     del bpy.types.Scene.meshstats
     bpy.utils.unregister_class(MeshstatsSceneProperties)
     bpy.utils.unregister_class(MeshstatsAddonPreferences)
-
-    bpy.app.handlers.load_pre.remove(app__load_pre_handler)
-    bpy.app.handlers.depsgraph_update_post.remove(app__depsgraph_update_post)
 
 
 

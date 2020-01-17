@@ -119,4 +119,13 @@ class BudgetPanel(bpy.types.Panel):
     bl_label = "Budget"
 
     def draw(self, context):
+        obj = get_object(context)
+        props = obj.meshstats
+
         self.layout.label(text="TODO")
+        if props.face_budget_on:
+            self.layout.prop(props, "face_budget_on")
+            self.layout.prop(props, "face_budget")
+            self.layout.prop(props, "face_budget_type")
+        else:
+            self.layout.prop(props, "face_budget_on")

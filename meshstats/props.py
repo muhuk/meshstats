@@ -22,7 +22,7 @@ import bpy
 class MeshstatsAddonPreferences(bpy.types.AddonPreferences):
     bl_idname = __package__
 
-    overlay_tris_color = bpy.props.FloatVectorProperty(
+    overlay_tris_color: bpy.props.FloatVectorProperty(
         name="overlay_tris_color",
         description="Color to be used to draw overlay of tris in 3D view.",
         default=(1.0, 0.0, 1.0, 0.3),
@@ -31,7 +31,7 @@ class MeshstatsAddonPreferences(bpy.types.AddonPreferences):
         min=0.0,
         max=1.0
     )
-    overlay_ngons_color = bpy.props.FloatVectorProperty(
+    overlay_ngons_color: bpy.props.FloatVectorProperty(
         name="overlay_ngons_color",
         description="Color to be used to draw overlay of ngons in 3D view.",
         default=(0.0, 1.0, 1.0, 0.3),
@@ -46,6 +46,34 @@ class MeshstatsAddonPreferences(bpy.types.AddonPreferences):
         layout.label(text="Overlay Preferences")
         layout.prop(self, "overlay_tris_color")
         layout.prop(self, "overlay_ngons_color")
+
+
+class MeshstatsObjectProperties(bpy.types.PropertyGroup):
+    face_budget_on: bpy.props.BoolProperty(
+        name="face_budget_on",
+        description="Toggle face budget"
+    )
+
+    face_budget: bpy.props.IntProperty(
+        name="face_budget",
+        description="Budget for number of faces in this mesh.",
+        default=1000,
+        min=1,
+        max=10_000_000,
+        soft_max=10_000,
+        step=1000,
+        subtype='UNSIGNED'
+    )
+
+    face_budget_type: bpy.props.EnumProperty(
+        name="face_buget_type",
+        description="Whether to cound tris or quads",
+        default='TRIS',
+        items=[
+            ('TRIS', "Tris", "Count triangulated faces", 1),
+            ('QUADS', "Quads", "Count only quads", 2)
+        ]
+    )
 
 
 class MeshstatsSceneProperties(bpy.types.PropertyGroup):
