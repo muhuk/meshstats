@@ -13,6 +13,8 @@
 
 ## [0.1] - 2020-01-04
 
+![screenshot_v0.1_1.jpeg](./img/screenshot_v0.1_1.jpeg)
+
 ### Added
 - Display basic face statistics inside `Item -> Meshstats` panel in 3D view.
 - Diplay in 3D view and overlay where tris & quads are outlined.
