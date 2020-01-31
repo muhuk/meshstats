@@ -3,6 +3,10 @@
 ## [Unreleased]
 
 ### Added
+- Face budgets per mesh.  There are three algorithms for calculating face
+  budget utilization.  `Tris` calculates utilization based on the
+  triangulation of the mesh.  `Quads Only` disregards tris & ngons and counts
+  only quads.  `Faces` counts each tri, quad and ngon as one.
 - Customization of colors (with alpha) in overlay.
 
 ### Fixed
