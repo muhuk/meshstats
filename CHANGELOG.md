@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+## [0.2] - 2020-02-01
+
 ### Added
 - Face budgets per mesh.  There are three algorithms for calculating face
   budget utilization.  `Tris` calculates utilization based on the
@@ -25,5 +27,6 @@
 - Allow enabling & disabling the overlay.  This setting is saved with the
   scene.
 
-[Unreleased]: https://github.com/muhuk/meshstats/compare/v0.1...HEAD
+[Unreleased]: https://github.com/muhuk/meshstats/compare/v0.2...v0.1
+[0.2]: https://github.com/muhuk/meshstats/releases/tag/v0.1...HEAD
 [0.1]: https://github.com/muhuk/meshstats/releases/tag/v0.1
