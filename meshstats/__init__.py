@@ -31,7 +31,7 @@ bl_info = {
     "name": "meshstats",
     "description": "Mesh statistics.",
     "author": "Atamert Ölçgen",
-    "version": (0, 2),
+    "version": (0, 3),
     "blender": (2, 81, 0),
     "location": "View3D > Meshstats panel",
     "tracker_url": "https://github.com/muhuk/meshstats",
