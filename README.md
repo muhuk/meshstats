@@ -13,7 +13,16 @@ See [CHANGELOG.md](./CHANGELOG.md) for release details.
 
 ## Installation
 
-**TODO**
+- Download the source zip [from releases
+  page](https://github.com/muhuk/meshstats/releases).  You need to click to
+  expand `Assets` under the correct version and download the file named
+  `meshstats-#.#.zip` (where #.# is the version number).
+- In Blender 2.80 or later, open `Preferences` editor (`Edit -> Preferences`
+  from the menu).
+- Click `Install...` button and choose the zip file you have downloaded.
+- Once the addon is installed, you **must** still enable it manually in
+  `Preferences` view.  It is not automatically enabled.
+- After installation, you can delete the zip file you have downloaded.
 
 ## Usage
 
