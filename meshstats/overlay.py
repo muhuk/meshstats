@@ -73,7 +73,7 @@ def draw_callback():
     bgl.glDisable(bgl.GL_BLEND)
 
 
-def _is_visible(face: Face, epsilon: float = 0.00001) -> bool:
+def _is_face_visible(face: Face, epsilon: float = 0.00001) -> bool:
     point = face.center()
     projected_vertex = location_3d_to_region_2d(
         bpy.context.region,
@@ -103,24 +103,26 @@ def _draw_overlay_faces(
         color: (float, float, float, float),
         faces: List[Face]
 ):
-    shader.uniform_float("color", color)
-    for face in filter(_is_visible, faces):
-        batch = gpu_extras.batch.batch_for_shader(
-            shader,
-            'LINE_LOOP',
-            {"pos": face.to_list()}
-        )
-        batch.draw(shader)
     faded_alpha = min(color[3] * 0.15 + 0.1, color[3])
     faded_color = (color[0], color[1], color[2], faded_alpha)
-    shader.uniform_float("color", faded_color)
-    for face in filter(lambda f: not _is_visible(f), faces):
-        batch = gpu_extras.batch.batch_for_shader(
-            shader,
-            'LINE_LOOP',
-            {"pos": face.to_list()}
-        )
-        batch.draw(shader)
+
+    for face in faces:
+        if _is_face_visible(face):
+            shader.uniform_float("color", color)
+            batch = gpu_extras.batch.batch_for_shader(
+                shader,
+                'LINE_LOOP',
+                {"pos": face.to_list()}
+            )
+            batch.draw(shader)
+        else:
+            shader.uniform_float("color", faded_color)
+            batch = gpu_extras.batch.batch_for_shader(
+                shader,
+                'LINE_LOOP',
+                {"pos": face.to_list()}
+            )
+            batch.draw(shader)
 
 
 def _draw_overlay_poles(
