@@ -18,12 +18,18 @@
 
 import bpy
 
-from meshstats.mesh import app__depsgraph_update_post
-from meshstats.mesh import app__load_pre_handler
+# import meshstats.constants
+from meshstats.mesh import (
+    app__depsgraph_update_post,
+    app__load_pre_handler
+)
 from meshstats.overlay import draw_callback
-from meshstats.props import MeshstatsAddonPreferences
-from meshstats.props import MeshstatsObjectProperties
-from meshstats.props import MeshstatsSceneProperties
+from meshstats.props import (
+    MeshstatsAddonPreferences,
+    MeshstatsObjectProperties,
+    MeshstatsResetSettings,
+    MeshstatsSceneProperties
+)
 from meshstats.ui import MainPanel
 
 
@@ -57,6 +63,9 @@ def register():
         type=MeshstatsObjectProperties
     )
 
+    # Register Operations
+    bpy.utils.register_class(MeshstatsResetSettings)
+
     # Register UI
     bpy.utils.register_class(MainPanel)
 
@@ -77,8 +86,11 @@ def unregister():
     bpy.app.handlers.load_pre.remove(app__load_pre_handler)
     bpy.app.handlers.depsgraph_update_post.remove(app__depsgraph_update_post)
 
-    # Unregaister UI
+    # Unregister UI
     bpy.utils.unregister_class(MainPanel)
+
+    # Unregister Operations
+    bpy.utils.unregister_class(MeshstatsResetSettings)
 
     # Unregister Props
     del bpy.types.Object.meshstats

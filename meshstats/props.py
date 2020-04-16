@@ -18,11 +18,15 @@
 
 import bpy
 
-from default import DEFAULT_TRIS_OUTLINE_COLOR, DEFAULT_NGONS_OUTLINE_COLOR
+from meshstats.constants import (
+    ADDON_NAME,
+    DEFAULT_TRIS_OUTLINE_COLOR,
+    DEFAULT_NGONS_OUTLINE_COLOR
+)
 
 
 class MeshstatsAddonPreferences(bpy.types.AddonPreferences):
-    bl_idname = __package__
+    bl_idname = ADDON_NAME
 
     overlay_tris_color: bpy.props.FloatVectorProperty(
         name="overlay_tris_color",
@@ -48,6 +52,7 @@ class MeshstatsAddonPreferences(bpy.types.AddonPreferences):
         layout.label(text="Overlay Preferences")
         layout.prop(self, "overlay_tris_color")
         layout.prop(self, "overlay_ngons_color")
+        layout.operator(MeshstatsResetSettings.bl_idname)
 
 
 class MeshstatsObjectProperties(bpy.types.PropertyGroup):
@@ -82,6 +87,18 @@ class MeshstatsObjectProperties(bpy.types.PropertyGroup):
             ),
         ]
     )
+
+
+class MeshstatsResetSettings(bpy.types.Operator):
+    """Reset Meshstats settings"""
+    bl_idname = "preferences.meshstats_reset_settings"
+    bl_label = "Reset Meshstats settings"
+
+    def execute(self, context):
+        addon_prefs = context.preferences.addons[ADDON_NAME].preferences
+        addon_prefs.overlay_tris_color = DEFAULT_TRIS_OUTLINE_COLOR
+        addon_prefs.overlay_ngons_color = DEFAULT_NGONS_OUTLINE_COLOR
+        return {'FINISHED'}
 
 
 class MeshstatsSceneProperties(bpy.types.PropertyGroup):

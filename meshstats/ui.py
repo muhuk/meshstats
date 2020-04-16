@@ -19,6 +19,7 @@
 import bpy
 
 from meshstats import mesh
+from meshstats.constants import ADDON_NAME
 from meshstats.context import get_object
 
 
@@ -100,7 +101,7 @@ class MainPanel(bpy.types.Panel):
 
     @staticmethod
     def _draw_overlay_options(context, layout):
-        addon_prefs = context.preferences.addons[__package__].preferences
+        addon_prefs = context.preferences.addons[ADDON_NAME].preferences
 
         layout.label(text="Overlay Options")
         col = layout.column(align=True)
