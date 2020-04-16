@@ -134,7 +134,9 @@ class Mesh:
             self.ngons_percentage = max(1, self.ngons_percentage)
 
         # Adjust if the sum is not 100
-        while self.tris_percentage + self.quads_percentage + self.ngons_percentage > 100:
+        while (self.tris_percentage +
+               self.quads_percentage +
+               self.ngons_percentage) > 100:
             if self.quads_percentage > self.tris_percentage \
                    and self.quads_percentage > self.ngons_percentage:
                 self.quads_percentage -= 1
@@ -142,7 +144,9 @@ class Mesh:
                 self.tris_percentage -= 1
             else:
                 self.ngons_percentage -= 1
-        while self.tris_percentage + self.quads_percentage + self.ngons_percentage < 100:
+        while (self.tris_percentage +
+               self.quads_percentage +
+               self.ngons_percentage) < 100:
             if self.ngons_percentage < self.quads_percentage \
                    and self.ngons_percentage < self.tris_percentage \
                    and self.ngons_percentage > 0:
@@ -173,7 +177,7 @@ def get_cache():
 
 
 @bpy.app.handlers.persistent
-def app__load_pre_handler():
+def app__load_pre_handler(*args_):
     global cache
     cache = None
 
