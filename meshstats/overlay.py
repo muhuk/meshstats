@@ -85,20 +85,14 @@ def _draw_overlay_faces(
     for face in faces:
         if _is_visible(face.center(), face.normal):
             shader.uniform_float("color", color)
-            batch = gpu_extras.batch.batch_for_shader(
-                shader,
-                'LINE_LOOP',
-                {"pos": face.to_list()}
-            )
-            batch.draw(shader)
         else:
             shader.uniform_float("color", faded_color)
-            batch = gpu_extras.batch.batch_for_shader(
-                shader,
-                'LINE_LOOP',
-                {"pos": face.to_list()}
-            )
-            batch.draw(shader)
+        batch = gpu_extras.batch.batch_for_shader(
+            shader,
+            'LINE_LOOP',
+            {"pos": face.to_list()}
+        )
+        batch.draw(shader)
 
 
 def _draw_overlay_poles(
@@ -112,20 +106,14 @@ def _draw_overlay_poles(
     for pole in poles:
         if _is_visible(pole.center):
             shader.uniform_float("color", color)
-            batch = gpu_extras.batch.batch_for_shader(
-                shader,
-                'POINTS',
-                {"pos": [pole.center]}
-            )
-            batch.draw(shader)
         else:
             shader.uniform_float("color", faded_color)
-            batch = gpu_extras.batch.batch_for_shader(
-                shader,
-                'POINTS',
-                {"pos": [pole.center]}
-            )
-            batch.draw(shader)
+        batch = gpu_extras.batch.batch_for_shader(
+            shader,
+            'POINTS',
+            {"pos": [pole.center]}
+        )
+        batch.draw(shader)
 
 
 def _is_visible(
