@@ -25,6 +25,7 @@ from bpy_extras.view3d_utils import location_3d_to_region_2d
 from bpy_extras.view3d_utils import region_2d_to_origin_3d
 import gpu
 import gpu_extras.batch
+import mathutils
 
 from meshstats import mesh
 from meshstats.face import Face
@@ -73,31 +74,6 @@ def draw_callback():
     bgl.glDisable(bgl.GL_BLEND)
 
 
-def _is_face_visible(face: Face, epsilon: float = 0.00001) -> bool:
-    point = face.center()
-    projected_vertex = location_3d_to_region_2d(
-        bpy.context.region,
-        bpy.context.space_data.region_3d,
-        point
-    )
-    ray_origin = region_2d_to_origin_3d(
-        bpy.context.region,
-        bpy.context.space_data.region_3d,
-        projected_vertex
-    )
-    ray = (point - ray_origin).normalized()
-    if degrees(ray.angle(face.normal)) < 90:
-        return False
-    (result, loc, _, _, obj, _) = bpy.context.scene.ray_cast(
-        bpy.context.view_layer,
-        ray_origin,
-        ray
-    )
-    return result \
-        and obj == bpy.context.active_object \
-        and (point - loc).length < epsilon
-
-
 def _draw_overlay_faces(
         shader: gpu.types.GPUShader,
         color: (float, float, float, float),
@@ -130,11 +106,73 @@ def _draw_overlay_poles(
         color: (float, float, float, float),
         poles: List[Pole]
 ):
-    shader.uniform_float("color", color)
+    faded_alpha = min(color[3] * 0.15 + 0.1, color[3])
+    faded_color = (color[0], color[1], color[2], faded_alpha)
+
     for pole in poles:
-        batch = gpu_extras.batch.batch_for_shader(
-            shader,
-            'POINTS',
-            {"pos": [pole.center]}
-        )
-        batch.draw(shader)
+        if _is_vertex_visible(pole.center):
+            shader.uniform_float("color", color)
+            batch = gpu_extras.batch.batch_for_shader(
+                shader,
+                'POINTS',
+                {"pos": [pole.center]}
+            )
+            batch.draw(shader)
+        else:
+            shader.uniform_float("color", faded_color)
+            batch = gpu_extras.batch.batch_for_shader(
+                shader,
+                'POINTS',
+                {"pos": [pole.center]}
+            )
+            batch.draw(shader)
+
+
+def _is_face_visible(face: Face, epsilon: float = 0.00001) -> bool:
+    point = face.center()
+    projected_vertex = location_3d_to_region_2d(
+        bpy.context.region,
+        bpy.context.space_data.region_3d,
+        point
+    )
+    ray_origin = region_2d_to_origin_3d(
+        bpy.context.region,
+        bpy.context.space_data.region_3d,
+        projected_vertex
+    )
+    ray = (point - ray_origin).normalized()
+    if degrees(ray.angle(face.normal)) < 90:
+        return False
+    (result, loc, _, _, obj, _) = bpy.context.scene.ray_cast(
+        bpy.context.view_layer,
+        ray_origin,
+        ray
+    )
+    return result \
+        and obj == bpy.context.active_object \
+        and (point - loc).length < epsilon
+
+
+def _is_vertex_visible(
+        vertex: mathutils.Vector,
+        epsilon: float = 0.00001
+) -> bool:
+    projected_vertex = location_3d_to_region_2d(
+        bpy.context.region,
+        bpy.context.space_data.region_3d,
+        vertex
+    )
+    ray_origin = region_2d_to_origin_3d(
+        bpy.context.region,
+        bpy.context.space_data.region_3d,
+        projected_vertex
+    )
+    ray = (vertex - ray_origin).normalized()
+    (result, loc, _, _, obj, _) = bpy.context.scene.ray_cast(
+        bpy.context.view_layer,
+        ray_origin,
+        ray
+    )
+    return result \
+        and obj == bpy.context.active_object \
+        and (vertex - loc).length < epsilon
