@@ -2,6 +2,15 @@
 
 ## [Unreleased]
 
+### Added
+
+- TODO: Poles overlay.
+
+### Changed
+
+- TODO: Preferences & defaults.
+- TODO: Overlay improvements.
+
 ## [0.2] - 2020-02-01
 
 ### Added
