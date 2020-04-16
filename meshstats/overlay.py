@@ -39,8 +39,9 @@ def draw_callback():
     if mesh_cache is None:
         return
     addon_prefs = bpy.context.preferences.addons[__package__].preferences
-    color_tri = addon_prefs.overlay_tris_color
-    color_ngon = addon_prefs.overlay_ngons_color
+    color_tris = addon_prefs.overlay_tris_color
+    color_ngons = addon_prefs.overlay_ngons_color
+    color_poles = addon_prefs.overlay_poles_color
 
     shader.bind()
 
@@ -51,16 +52,16 @@ def draw_callback():
     if props.overlay_tris:
         _draw_overlay_faces(
             shader,
-            color_tri,
+            color_tris,
             mesh_cache.tris
         )
     if props.overlay_ngons:
         _draw_overlay_faces(
             shader,
-            color_ngon,
+            color_ngons,
             mesh_cache.ngons
         )
-    _draw_overlay_poles(shader, (1.0, 0.0, 0.0, 1.0), mesh_cache.poles)
+    _draw_overlay_poles(shader, color_poles, mesh_cache.poles)
 
     # Reset defaults
     bgl.glLineWidth(1)
