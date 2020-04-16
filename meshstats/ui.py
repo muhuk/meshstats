@@ -104,30 +104,44 @@ class MainPanel(bpy.types.Panel):
         addon_prefs = context.preferences.addons[ADDON_NAME].preferences
 
         layout.label(text="Overlay Options")
-        col = layout.column(align=True)
-        col.prop(
+        col1 = layout.column(align=True)
+        col1.prop(
             context.scene.meshstats,
             "overlay_tris",
             icon='OVERLAY',
             text="Overlay tris"
         )
-        if context.scene.meshstats["overlay_tris"]:
-            col.prop(
+        if context.scene.meshstats.overlay_tris:
+            col1.prop(
                 addon_prefs,
                 "overlay_tris_color",
                 text=""
             )
 
-        col = layout.column(align=True)
-        col.prop(
+        col2 = layout.column(align=True)
+        col2.prop(
             context.scene.meshstats,
             "overlay_ngons",
             icon='OVERLAY',
             text="Overlay ngons"
         )
-        if context.scene.meshstats["overlay_ngons"]:
-            col.prop(
+        if context.scene.meshstats.overlay_ngons:
+            col2.prop(
                 addon_prefs,
                 "overlay_ngons_color",
+                text=""
+            )
+
+        col3 = layout.column(align=True)
+        col3.prop(
+            context.scene.meshstats,
+            "overlay_poles",
+            icon='OVERLAY',
+            text="Overlay poles"
+        )
+        if context.scene.meshstats.overlay_poles:
+            col3.prop(
+                addon_prefs,
+                "overlay_poles_color",
                 text=""
             )

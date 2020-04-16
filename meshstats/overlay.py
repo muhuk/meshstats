@@ -61,7 +61,12 @@ def draw_callback():
             color_ngons,
             mesh_cache.ngons
         )
-    _draw_overlay_poles(shader, color_poles, mesh_cache.poles)
+    if props.overlay_poles:
+        _draw_overlay_poles(
+            shader,
+            color_poles,
+            mesh_cache.poles
+        )
 
     # Reset defaults
     bgl.glLineWidth(1)
