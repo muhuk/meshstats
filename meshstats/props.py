@@ -18,6 +18,8 @@
 
 import bpy
 
+from default import DEFAULT_TRIS_OUTLINE_COLOR, DEFAULT_NGONS_OUTLINE_COLOR
+
 
 class MeshstatsAddonPreferences(bpy.types.AddonPreferences):
     bl_idname = __package__
@@ -25,7 +27,7 @@ class MeshstatsAddonPreferences(bpy.types.AddonPreferences):
     overlay_tris_color: bpy.props.FloatVectorProperty(
         name="overlay_tris_color",
         description="Color to be used to draw overlay of tris in 3D view.",
-        default=(1.0, 0.0, 1.0, 0.3),
+        default=DEFAULT_TRIS_OUTLINE_COLOR,
         subtype='COLOR',
         size=4,
         min=0.0,
@@ -34,7 +36,7 @@ class MeshstatsAddonPreferences(bpy.types.AddonPreferences):
     overlay_ngons_color: bpy.props.FloatVectorProperty(
         name="overlay_ngons_color",
         description="Color to be used to draw overlay of ngons in 3D view.",
-        default=(0.0, 1.0, 1.0, 0.3),
+        default=DEFAULT_NGONS_OUTLINE_COLOR,
         subtype='COLOR',
         size=4,
         min=0.0,
