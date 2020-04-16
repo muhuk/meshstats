@@ -26,8 +26,9 @@ from bpy_extras.view3d_utils import region_2d_to_origin_3d
 import gpu
 import gpu_extras.batch
 
-from meshstats.face import Face
 from meshstats import mesh
+from meshstats.face import Face
+from meshstats.pole import Pole
 
 
 shader = gpu.shader.from_builtin('3D_UNIFORM_COLOR')
@@ -59,15 +60,7 @@ def draw_callback():
             color_ngon,
             mesh_cache.ngons
         )
-
-    for pole in mesh_cache.poles:
-        shader.uniform_float("color", (1.0, 0.0, 0.0, 1.0))
-        batch = gpu_extras.batch.batch_for_shader(
-            shader,
-            'POINTS',
-            {"pos": [pole.center]}
-        )
-        batch.draw(shader)
+    _draw_overlay_poles(shader, (1.0, 0.0, 0.0, 1.0), mesh_cache.poles)
 
     # Reset defaults
     bgl.glLineWidth(1)
@@ -120,5 +113,20 @@ def _draw_overlay_faces(
             shader,
             'LINE_LOOP',
             {"pos": face.to_list()}
+        )
+        batch.draw(shader)
+
+
+def _draw_overlay_poles(
+        shader: gpu.types.GPUShader,
+        color: (float, float, float, float),
+        poles: List[Pole]
+):
+    shader.uniform_float("color", color)
+    for pole in poles:
+        batch = gpu_extras.batch.batch_for_shader(
+            shader,
+            'POINTS',
+            {"pos": [pole.center]}
         )
         batch.draw(shader)
