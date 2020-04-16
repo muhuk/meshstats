@@ -83,7 +83,7 @@ def _draw_overlay_faces(
     faded_color = (color[0], color[1], color[2], faded_alpha)
 
     for face in faces:
-        if _is_face_visible(face):
+        if _is_visible(face.center(), face.normal):
             shader.uniform_float("color", color)
             batch = gpu_extras.batch.batch_for_shader(
                 shader,
@@ -110,7 +110,7 @@ def _draw_overlay_poles(
     faded_color = (color[0], color[1], color[2], faded_alpha)
 
     for pole in poles:
-        if _is_vertex_visible(pole.center):
+        if _is_visible(pole.center):
             shader.uniform_float("color", color)
             batch = gpu_extras.batch.batch_for_shader(
                 shader,
@@ -128,8 +128,11 @@ def _draw_overlay_poles(
             batch.draw(shader)
 
 
-def _is_face_visible(face: Face, epsilon: float = 0.00001) -> bool:
-    point = face.center()
+def _is_visible(
+        point: mathutils.Vector,
+        normal: mathutils.Vector = None,
+        epsilon: float = 0.00001
+) -> bool:
     projected_vertex = location_3d_to_region_2d(
         bpy.context.region,
         bpy.context.space_data.region_3d,
@@ -141,7 +144,7 @@ def _is_face_visible(face: Face, epsilon: float = 0.00001) -> bool:
         projected_vertex
     )
     ray = (point - ray_origin).normalized()
-    if degrees(ray.angle(face.normal)) < 90:
+    if normal and degrees(ray.angle(normal)) < 90:
         return False
     (result, loc, _, _, obj, _) = bpy.context.scene.ray_cast(
         bpy.context.view_layer,
@@ -151,28 +154,3 @@ def _is_face_visible(face: Face, epsilon: float = 0.00001) -> bool:
     return result \
         and obj == bpy.context.active_object \
         and (point - loc).length < epsilon
-
-
-def _is_vertex_visible(
-        vertex: mathutils.Vector,
-        epsilon: float = 0.00001
-) -> bool:
-    projected_vertex = location_3d_to_region_2d(
-        bpy.context.region,
-        bpy.context.space_data.region_3d,
-        vertex
-    )
-    ray_origin = region_2d_to_origin_3d(
-        bpy.context.region,
-        bpy.context.space_data.region_3d,
-        projected_vertex
-    )
-    ray = (vertex - ray_origin).normalized()
-    (result, loc, _, _, obj, _) = bpy.context.scene.ray_cast(
-        bpy.context.view_layer,
-        ray_origin,
-        ray
-    )
-    return result \
-        and obj == bpy.context.active_object \
-        and (vertex - loc).length < epsilon
