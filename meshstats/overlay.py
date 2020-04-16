@@ -60,6 +60,15 @@ def draw_callback():
             mesh_cache.ngons
         )
 
+    for pole in mesh_cache.poles:
+        shader.uniform_float("color", (1.0, 0.0, 0.0, 1.0))
+        batch = gpu_extras.batch.batch_for_shader(
+            shader,
+            'POINTS',
+            {"pos": [pole.center]}
+        )
+        batch.draw(shader)
+
     # Reset defaults
     bgl.glLineWidth(1)
     bgl.glDisable(bgl.GL_BLEND)

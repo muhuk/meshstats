@@ -27,6 +27,7 @@ import mathutils
 
 from meshstats.context import get_object
 from meshstats.face import FaceTri, FaceNgon
+from meshstats.pole import Pole
 
 
 @dataclasses.dataclass(eq=False)
@@ -38,6 +39,10 @@ class Mesh:
         default_factory=list
     )
     ngons: typing.List[FaceNgon] = dataclasses.field(
+        init=False,
+        default_factory=list
+    )
+    poles: typing.List[Pole] = dataclasses.field(
         init=False,
         default_factory=list
     )
@@ -88,10 +93,14 @@ class Mesh:
                 )
                 del vertices, center
 
-        self.tesellated_tris_count = len(bm.calc_loop_triangles())
+        for vertex in bm.verts:
+            edge_count = len(
+                [edge for edge in vertex.link_edges if not edge.is_boundary]
+            )
+            if edge_count == 3 or edge_count >= 5:
+                self.poles.append(Pole(copy.deepcopy(vertex.co), list()))
 
-        self.face_count = len(bm.faces)
-        self._update_counts()
+        self._update_counts(bm)
         self._update_percentages()
 
         bm.free()
@@ -115,10 +124,12 @@ class Mesh:
         else:
             return None
 
-    def _update_counts(self):
+    def _update_counts(self, bm):
+        self.face_count = len(bm.faces)
         self.tris_count = len(self.tris)
         self.ngons_count = len(self.ngons)
         self.quads_count = self.face_count - self.tris_count - self.ngons_count
+        self.tesellated_tris_count = len(bm.calc_loop_triangles())
 
     def _update_percentages(self):
         self.tris_percentage = int(self.tris_count * 100.0 / self.face_count)
