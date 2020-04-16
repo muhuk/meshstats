@@ -7,9 +7,9 @@ BUILD_DIR = ./release
 SCRIPTS_DIR = ./scripts
 ZIP_DIR = $(BUILD_DIR)/$(PACKAGE_NAME)
 
-BLENDER_PATH = ~/lib/blender-2.81a-linux-glibc217-x86_64
+BLENDER_PATH = ~/lib/blender/blender-2.82a-linux64/
 
-.DEFAULT_GOAL  := build
+.DEFAULT_GOAL  := run
 
 .PHONY: clean build relase run tag version
 
@@ -21,14 +21,17 @@ build:
 	@mv $(BUILD_DIR)/$(PACKAGE_NAME)/$(PACKAGE_NAME).zip $(BUILD_DIR)/
 	@echo "Created '$(BUILD_DIR)/$(PACKAGE_NAME).zip'"
 
+check:
+	@flake8 --show-source $(SOURCE_DIR)
+
 clean:
 	@rm -rf $(BUILD_DIR)
 	@echo "Deleted $(BUILD_DIR)"
 
-release: clean version build tag
+release: clean check version build tag
 	@echo "Done"
 
-run: clean build
+run: clean check build
 	ZIP_FILE=`realpath "$(BUILD_DIR)/$(PACKAGE_NAME).zip"` \
 	$(BLENDER_PATH)/blender -d \
 		--debug-python \
