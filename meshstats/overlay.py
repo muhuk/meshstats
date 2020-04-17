@@ -33,9 +33,6 @@ from meshstats.face import Face
 from meshstats.pole import Pole
 
 
-shader = gpu.shader.from_builtin('3D_UNIFORM_COLOR')
-
-
 def draw_callback():
     mesh_cache = mesh.get_cache()
     if mesh_cache is None:
@@ -45,34 +42,40 @@ def draw_callback():
     color_ngons = addon_prefs.overlay_ngons_color
     color_poles = addon_prefs.overlay_poles_color
 
-    shader.bind()
+    uniform_shader = gpu.shader.from_builtin('3D_UNIFORM_COLOR')
+    smooth_shader = gpu.shader.from_builtin('3D_SMOOTH_COLOR')
+    uniform_shader.bind()
+    smooth_shader.bind()
 
-    bgl.glLineWidth(3)
     bgl.glEnable(bgl.GL_BLEND)
+    bgl.glLineWidth(3)
+    bgl.glPointSize(8)
 
     props = bpy.context.scene.meshstats
     if props.overlay_tris:
         _draw_overlay_faces(
-            shader,
+            uniform_shader,
             color_tris,
             mesh_cache.tris
         )
     if props.overlay_ngons:
         _draw_overlay_faces(
-            shader,
+            uniform_shader,
             color_ngons,
             mesh_cache.ngons
         )
     if props.overlay_poles:
         _draw_overlay_poles(
-            shader,
+            uniform_shader,
+            smooth_shader,
             color_poles,
             mesh_cache.poles
         )
 
     # Reset defaults
-    bgl.glLineWidth(1)
     bgl.glDisable(bgl.GL_BLEND)
+    bgl.glLineWidth(1)
+    bgl.glPointSize(1)
 
 
 def _draw_overlay_faces(
@@ -97,32 +100,45 @@ def _draw_overlay_faces(
 
 
 def _draw_overlay_poles(
-        shader: gpu.types.GPUShader,
+        uniform_shader: gpu.types.GPUShader,
+        smooth_shader: gpu.types.GPUShader,
         color: (float, float, float, float),
         poles: List[Pole]
 ):
     faded_alpha = min(color[3] * 0.15 + 0.1, color[3])
     faded_color = (color[0], color[1], color[2], faded_alpha)
+    zeroed_color = (color[0], color[1], color[2], faded_alpha / 10.0)
+
+    use_color = None
 
     for pole in poles:
         if _is_visible(pole.center):
-            shader.uniform_float("color", color)
+            use_color = color
         else:
-            shader.uniform_float("color", faded_color)
+            use_color = faded_color
+
         # Draw the center
+        uniform_shader.uniform_float("color", use_color)
         batch = gpu_extras.batch.batch_for_shader(
-            shader,
+            uniform_shader,
             'POINTS',
             {"pos": [pole.center]}
         )
-        batch.draw(shader)
+        batch.draw(uniform_shader)
+
         # Draw spokes
+        midpoints = [(pole.center + v) / 2 for v in pole.spokes]
         batch = gpu_extras.batch.batch_for_shader(
-            shader,
+            smooth_shader,
             'LINES',
-            {"pos": list(chain(*zip(repeat(pole.center), pole.spokes)))}
+            {
+                "pos": list(chain(*zip(repeat(pole.center), midpoints))),
+                "color": list(
+                    chain(*repeat([use_color, zeroed_color], len(pole.spokes)))
+                )
+            }
         )
-        batch.draw(shader)
+        batch.draw(smooth_shader)
 
 
 def _is_visible(
