@@ -26,8 +26,8 @@ import bpy
 import mathutils
 
 from meshstats.context import get_object
-from meshstats.face import FaceTri, FaceNgon
-from meshstats.pole import Pole
+from meshstats.face import (FaceTri, FaceNgon)
+from meshstats.pole import (EPole, GenericPole, Pole, NPole)
 
 
 @dataclasses.dataclass(eq=False)
@@ -98,7 +98,24 @@ class Mesh:
                 [edge for edge in vertex.link_edges if not edge.is_boundary]
             )
             if edge_count == 3 or edge_count >= 5:
-                self.poles.append(Pole(copy.deepcopy(vertex.co), list()))
+                spokes = copy.deepcopy(
+                    [e.other_vert(vertex).co for e in vertex.link_edges]
+                )
+                if edge_count == 3:
+                    self.poles.append(NPole(
+                        center=copy.deepcopy(vertex.co),
+                        spokes=tuple(spokes)
+                    ))
+                elif edge_count == 5:
+                    self.poles.append(EPole(
+                        center=copy.deepcopy(vertex.co),
+                        spokes=tuple(spokes)
+                    ))
+                elif edge_count > 5:
+                    self.poles.append(GenericPole(
+                        center=copy.deepcopy(vertex.co),
+                        spokes=list(spokes)
+                    ))
 
         self._update_counts(bm)
         self._update_percentages()

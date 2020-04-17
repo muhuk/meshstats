@@ -16,13 +16,40 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
+import abc
 from dataclasses import dataclass
 from typing import List
 
 import mathutils
 
 
+class Pole(abc.ABC):
+    pass
+
+
 @dataclass(frozen=True)
-class Pole:
+class EPole(Pole):
+    center: mathutils.Vector
+    spokes: (
+        mathutils.Vector,
+        mathutils.Vector,
+        mathutils.Vector,
+        mathutils.Vector,
+        mathutils.Vector
+    )
+
+
+@dataclass(frozen=True)
+class NPole(Pole):
+    center: mathutils.Vector
+    spokes: (
+        mathutils.Vector,
+        mathutils.Vector,
+        mathutils.Vector
+    )
+
+
+@dataclass(frozen=True)
+class GenericPole(Pole):
     center: mathutils.Vector
     spokes: List[mathutils.Vector]

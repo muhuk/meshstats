@@ -16,6 +16,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
+from itertools import (chain, repeat)
 from math import degrees
 from typing import List
 
@@ -108,10 +109,18 @@ def _draw_overlay_poles(
             shader.uniform_float("color", color)
         else:
             shader.uniform_float("color", faded_color)
+        # Draw the center
         batch = gpu_extras.batch.batch_for_shader(
             shader,
             'POINTS',
             {"pos": [pole.center]}
+        )
+        batch.draw(shader)
+        # Draw spokes
+        batch = gpu_extras.batch.batch_for_shader(
+            shader,
+            'LINES',
+            {"pos": list(chain(*zip(repeat(pole.center), pole.spokes)))}
         )
         batch.draw(shader)
 
