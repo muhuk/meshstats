@@ -68,11 +68,16 @@ class Mesh:
 
         for face in bm.faces:
             if len(face.loops) == 3:
-                [a, b, c] = [copy.deepcopy(l.vert.co) for l in face.loops]
+                vertices = [copy.deepcopy(l.vert.co) for l in face.loops]
+                center = (vertices[0] + vertices[1] + vertices[2]) / 3
                 self.tris.append(
-                    FaceTri(a, b, c, copy.deepcopy(face.normal))
+                    FaceTri(
+                        center=center,
+                        vertices=tuple(vertices),
+                        normal=copy.deepcopy(face.normal)
+                    )
                 )
-                del a, b, c
+                del vertices, center
             elif len(face.loops) > 4:
                 vertices = [copy.deepcopy(l.vert.co) for l in face.loops]
                 # vertices are in world coords so we need to transform center
@@ -86,9 +91,9 @@ class Mesh:
                 center = m @ center
                 self.ngons.append(
                     FaceNgon(
-                        vertices,
-                        copy.deepcopy(face.normal),
-                        center
+                        center=center,
+                        vertices=vertices,
+                        normal=copy.deepcopy(face.normal),
                     )
                 )
                 del vertices, center

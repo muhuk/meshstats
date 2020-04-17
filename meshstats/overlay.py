@@ -84,14 +84,14 @@ def _draw_overlay_faces(
     faded_color = (color[0], color[1], color[2], faded_alpha)
 
     for face in faces:
-        if _is_visible(face.center(), face.normal):
+        if _is_visible(face.center, face.normal):
             shader.uniform_float("color", color)
         else:
             shader.uniform_float("color", faded_color)
         batch = gpu_extras.batch.batch_for_shader(
             shader,
             'LINE_LOOP',
-            {"pos": face.to_list()}
+            {"pos": face.vertices}
         )
         batch.draw(shader)
 
