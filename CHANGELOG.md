@@ -4,12 +4,10 @@
 
 ### Added
 
-- TODO: Poles overlay.
-
-### Changed
-
-- TODO: Preferences & defaults.
-- TODO: Overlay improvements.
+- Display poles in overlay.  You can enable this overlay in `Item ->
+  Meshstats` panel in 3D view.
+- Added factory defaults for overlay colors.  Click `Reset Meshstats settings`
+  button in addon preferences to return to factory defaults.
 
 ## [0.2] - 2020-02-01
 

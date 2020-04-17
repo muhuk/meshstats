@@ -26,14 +26,11 @@ from meshstats.context import get_object
 class MainPanel(bpy.types.Panel):
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'UI'
+    bl_context = ".objectmode"
     bl_category = "Item"
 
     bl_idname = "VIEW3D_PT_meshstats"
     bl_label = "Meshstats"
-
-    @classmethod
-    def poll(cls, context):
-        return get_object(context) is not None
 
     def draw(self, context):
         self.layout.template_ID(
@@ -41,14 +38,19 @@ class MainPanel(bpy.types.Panel):
             "active",
             filter='AVAILABLE'
         )
-        if mesh.get_cache() is not None:
-            self._draw_summary_table(self.layout.box())
-            self._draw_budget(context, self.layout.box())
-            self._draw_overlay_options(context, self.layout.box())
+        if get_object(context) is None:
+            self.layout.label(
+                text="Mesh statistics is only available for meshes."
+            )
         else:
-            self.layout.alert = True
-            self.layout.label(text="Calculating...")
-            self.layout.alert = False
+            if mesh.get_cache() is not None:
+                self._draw_summary_table(self.layout.box())
+                self._draw_budget(context, self.layout.box())
+                self._draw_overlay_options(context, self.layout.box())
+            else:
+                self.layout.alert = True
+                self.layout.label(text="Calculating...")
+                self.layout.alert = False
 
     @staticmethod
     def _draw_budget(context, layout):
