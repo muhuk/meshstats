@@ -33,7 +33,10 @@ from meshstats.props import (
     MeshstatsResetSettings,
     MeshstatsSceneProperties
 )
-from meshstats.ui import VIEW3D_PT_meshstats
+from meshstats.ui import (
+    VIEW3D_PT_meshstats,
+    VIEW3D_PT_overlay_meshstats
+)
 
 
 bl_info = {
@@ -73,6 +76,7 @@ def register():
 
     # Register UI
     bpy.utils.register_class(VIEW3D_PT_meshstats)
+    bpy.utils.register_class(VIEW3D_PT_overlay_meshstats)
 
     # Register Handlers
     bpy.app.handlers.load_pre.append(app__load_pre_handler)
@@ -92,6 +96,7 @@ def unregister():
     bpy.app.handlers.depsgraph_update_post.remove(app__depsgraph_update_post)
 
     # Unregister UI
+    bpy.utils.unregister_class(VIEW3D_PT_overlay_meshstats)
     bpy.utils.unregister_class(VIEW3D_PT_meshstats)
 
     # Unregister Operations

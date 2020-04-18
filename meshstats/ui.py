@@ -23,7 +23,31 @@ from meshstats.context import get_object
 from meshstats.icon import get_icon
 
 
-class VIEW3D_PT_meshstats(bpy.types.Panel):
+class MeshstatsPanel(bpy.types.Panel):
+    @staticmethod
+    def _draw_overlay_options(context, layout):
+        row = layout.row(align=True)
+        row.prop(
+            context.scene.meshstats,
+            "overlay_tris",
+            icon_value=get_icon("overlay_tris").icon_id,
+            text="Tris"
+        )
+        row.prop(
+            context.scene.meshstats,
+            "overlay_ngons",
+            icon_value=get_icon("overlay_ngons").icon_id,
+            text="Ngons"
+        )
+        row.prop(
+            context.scene.meshstats,
+            "overlay_poles",
+            icon='OVERLAY',
+            text="Poles"
+        )
+
+
+class VIEW3D_PT_meshstats(MeshstatsPanel):
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'UI'
     bl_context = ".objectmode"
@@ -46,7 +70,9 @@ class VIEW3D_PT_meshstats(bpy.types.Panel):
             if mesh.get_cache() is not None:
                 self._draw_summary_table(self.layout.box())
                 self._draw_budget(context, self.layout.box())
-                self._draw_overlay_options(context, self.layout.box())
+                overlay_box = self.layout.box()
+                overlay_box.label(text="Overlay options")
+                self._draw_overlay_options(context, overlay_box)
             else:
                 self.layout.alert = True
                 self.layout.label(text="Calculating...")
@@ -101,25 +127,12 @@ class VIEW3D_PT_meshstats(bpy.types.Panel):
             + mesh_cache.ngons_percentage
         ))
 
-    @staticmethod
-    def _draw_overlay_options(context, layout):
-        layout.label(text="Overlay Options")
-        row = layout.row(align=True)
-        row.prop(
-            context.scene.meshstats,
-            "overlay_tris",
-            icon_value=get_icon("overlay_tris").icon_id,
-            text="Tris"
-        )
-        row.prop(
-            context.scene.meshstats,
-            "overlay_ngons",
-            icon_value=get_icon("overlay_ngons").icon_id,
-            text="Ngons"
-        )
-        row.prop(
-            context.scene.meshstats,
-            "overlay_poles",
-            icon='OVERLAY',
-            text="Poles"
-        )
+
+class VIEW3D_PT_overlay_meshstats(MeshstatsPanel):
+    bl_space_type = 'VIEW_3D'
+    bl_region_type = 'HEADER'
+    bl_parent_id = 'VIEW3D_PT_overlay'
+    bl_label = "Meshstats"
+
+    def draw(self, context):
+        self._draw_overlay_options(context, self.layout)
