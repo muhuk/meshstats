@@ -9,6 +9,10 @@
 - Added factory defaults for overlay colors.  Click `Reset Meshstats settings`
   button in addon preferences to return to factory defaults.
 
+### Removed
+
+- Changing of overlay colors is removed from 3D view panel.
+
 ## [0.2] - 2020-02-01
 
 ### Added
