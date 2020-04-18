@@ -22,7 +22,7 @@ from meshstats import mesh
 from meshstats.context import get_object
 
 
-class MainPanel(bpy.types.Panel):
+class VIEW3D_PT_meshstats(bpy.types.Panel):
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'UI'
     bl_context = ".objectmode"
