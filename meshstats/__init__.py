@@ -18,7 +18,10 @@
 
 import bpy
 
-# import meshstats.constants
+from meshstats.icon import (
+    load_icons,
+    unload_icons
+)
 from meshstats.mesh import (
     app__depsgraph_update_post,
     app__load_pre_handler
@@ -51,6 +54,8 @@ draw_handler = None
 
 def register():
     global draw_handler
+
+    load_icons()
 
     # Register Props
     bpy.utils.register_class(MeshstatsAddonPreferences)
@@ -98,6 +103,8 @@ def unregister():
     del bpy.types.Scene.meshstats
     bpy.utils.unregister_class(MeshstatsSceneProperties)
     bpy.utils.unregister_class(MeshstatsAddonPreferences)
+
+    unload_icons()
 
 
 if __name__ == "__main__":

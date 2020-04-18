@@ -5,6 +5,7 @@ PACKAGE_NAME = $(NAME)-$(VERSION)
 SOURCE_DIR = $(NAME)
 BUILD_DIR = ./release
 SCRIPTS_DIR = ./scripts
+ICONS_DIR = "icons"
 ZIP_DIR = $(BUILD_DIR)/$(PACKAGE_NAME)
 
 BLENDER_PATH = ~/lib/blender/blender-2.82a-linux64/
@@ -16,6 +17,7 @@ BLENDER_PATH = ~/lib/blender/blender-2.82a-linux64/
 build:
 	@mkdir -p $(BUILD_DIR)/$(PACKAGE_NAME)
 	@rsync -av --exclude="__pycache__" ./$(SOURCE_DIR) $(BUILD_DIR)/$(PACKAGE_NAME)
+	@rsync -av ./$(ICONS_DIR)/*.png $(BUILD_DIR)/$(PACKAGE_NAME)/$(NAME)/$(ICONS_DIR)/
 	@cp COPYING.txt $(BUILD_DIR)/$(PACKAGE_NAME)/$(SOURCE_DIR)
 	@cd $(BUILD_DIR)/$(PACKAGE_NAME); zip -r "$(PACKAGE_NAME).zip" $(SOURCE_DIR)
 	@mv $(BUILD_DIR)/$(PACKAGE_NAME)/$(PACKAGE_NAME).zip $(BUILD_DIR)/

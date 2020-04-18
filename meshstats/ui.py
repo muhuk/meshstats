@@ -20,6 +20,7 @@ import bpy
 
 from meshstats import mesh
 from meshstats.context import get_object
+from meshstats.icon import get_icon
 
 
 class VIEW3D_PT_meshstats(bpy.types.Panel):
@@ -103,22 +104,22 @@ class VIEW3D_PT_meshstats(bpy.types.Panel):
     @staticmethod
     def _draw_overlay_options(context, layout):
         layout.label(text="Overlay Options")
-        col = layout.column(align=True)
-        col.prop(
+        row = layout.row(align=True)
+        row.prop(
             context.scene.meshstats,
             "overlay_tris",
-            icon='OVERLAY',
-            text="Overlay tris"
+            icon_value=get_icon("overlay_tris").icon_id,
+            text="Tris"
         )
-        col.prop(
+        row.prop(
             context.scene.meshstats,
             "overlay_ngons",
-            icon='OVERLAY',
-            text="Overlay ngons"
+            icon_value=get_icon("overlay_ngons").icon_id,
+            text="Ngons"
         )
-        col.prop(
+        row.prop(
             context.scene.meshstats,
             "overlay_poles",
             icon='OVERLAY',
-            text="Overlay poles"
+            text="Poles"
         )
