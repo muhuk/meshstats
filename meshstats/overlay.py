@@ -22,6 +22,7 @@ from typing import List
 
 import bgl
 import bpy
+import bpy.types
 from bpy_extras.view3d_utils import location_3d_to_region_2d
 from bpy_extras.view3d_utils import region_2d_to_origin_3d
 import gpu
@@ -29,15 +30,18 @@ import gpu_extras.batch
 import mathutils
 
 from meshstats import mesh
+from meshstats.constants import ADDON_NAME
 from meshstats.face import Face
 from meshstats.pole import Pole
 
 
 def draw_callback():
     mesh_cache = mesh.get_cache()
-    if mesh_cache is None:
+    if bpy.context.space_data.overlay.show_overlays is False \
+       or mesh_cache is None:
         return
-    addon_prefs = bpy.context.preferences.addons[__package__].preferences
+    context = bpy.context
+    addon_prefs = context.preferences.addons[ADDON_NAME].preferences
     color_tris = addon_prefs.overlay_tris_color
     color_ngons = addon_prefs.overlay_ngons_color
     color_poles = addon_prefs.overlay_poles_color
@@ -51,21 +55,24 @@ def draw_callback():
     bgl.glLineWidth(3)
     bgl.glPointSize(8)
 
-    props = bpy.context.scene.meshstats
+    props = context.scene.meshstats
     if props.overlay_tris:
         _draw_overlay_faces(
+            context,
             uniform_shader,
             color_tris,
             mesh_cache.tris
         )
     if props.overlay_ngons:
         _draw_overlay_faces(
+            context,
             uniform_shader,
             color_ngons,
             mesh_cache.ngons
         )
     if props.overlay_poles:
         _draw_overlay_poles(
+            context,
             uniform_shader,
             smooth_shader,
             color_poles,
@@ -79,6 +86,7 @@ def draw_callback():
 
 
 def _draw_overlay_faces(
+        context: bpy.types.Context,
         shader: gpu.types.GPUShader,
         color: (float, float, float, float),
         faces: List[Face]
@@ -87,7 +95,7 @@ def _draw_overlay_faces(
     faded_color = (color[0], color[1], color[2], faded_alpha)
 
     for face in faces:
-        if _is_visible(face.center, face.normal):
+        if _is_visible(context, face.center, face.normal):
             shader.uniform_float("color", color)
         else:
             shader.uniform_float("color", faded_color)
@@ -100,6 +108,7 @@ def _draw_overlay_faces(
 
 
 def _draw_overlay_poles(
+        context: bpy.types.Context,
         uniform_shader: gpu.types.GPUShader,
         smooth_shader: gpu.types.GPUShader,
         color: (float, float, float, float),
@@ -112,7 +121,7 @@ def _draw_overlay_poles(
     use_color = None
 
     for pole in poles:
-        if _is_visible(pole.center):
+        if _is_visible(context, pole.center):
             use_color = color
         else:
             use_color = faded_color
@@ -142,28 +151,29 @@ def _draw_overlay_poles(
 
 
 def _is_visible(
+        context: bpy.types.Context,
         point: mathutils.Vector,
         normal: mathutils.Vector = None,
         epsilon: float = 0.00001
 ) -> bool:
     projected_vertex = location_3d_to_region_2d(
-        bpy.context.region,
-        bpy.context.space_data.region_3d,
+        context.region,
+        context.space_data.region_3d,
         point
     )
     ray_origin = region_2d_to_origin_3d(
-        bpy.context.region,
-        bpy.context.space_data.region_3d,
+        context.region,
+        context.space_data.region_3d,
         projected_vertex
     )
     ray = (point - ray_origin).normalized()
     if normal and degrees(ray.angle(normal)) < 90:
         return False
-    (result, loc, _, _, obj, _) = bpy.context.scene.ray_cast(
-        bpy.context.view_layer,
+    (result, loc, _, _, obj, _) = context.scene.ray_cast(
+        context.view_layer,
         ray_origin,
         ray
     )
     return result \
-        and obj == bpy.context.active_object \
+        and obj == context.active_object \
         and (point - loc).length < epsilon
