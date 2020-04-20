@@ -22,7 +22,9 @@ from meshstats.constants import (
     ADDON_NAME,
     DEFAULT_TRIS_OUTLINE_COLOR,
     DEFAULT_NGONS_OUTLINE_COLOR,
-    DEFAULT_POLES_COLOR,
+    DEFAULT_N_POLES_COLOR,
+    DEFAULT_E_POLES_COLOR,
+    DEFAULT_STAR_POLES_COLOR,
 )
 
 
@@ -47,10 +49,30 @@ class MeshstatsAddonPreferences(bpy.types.AddonPreferences):
         min=0.0,
         max=1.0
     )
-    overlay_poles_color: bpy.props.FloatVectorProperty(
-        name="overlay_poles_color",
-        description="Color to be used to draw overlay of poles in 3D view.",
-        default=DEFAULT_POLES_COLOR,
+    overlay_n_poles_color: bpy.props.FloatVectorProperty(
+        name="overlay_n_poles_color",
+        description="Color to be used to draw overlay of N-poles in 3D view.",
+        default=DEFAULT_N_POLES_COLOR,
+        subtype='COLOR',
+        size=4,
+        min=0.0,
+        max=1.0
+    )
+
+    overlay_e_poles_color: bpy.props.FloatVectorProperty(
+        name="overlay_e_poles_color",
+        description="Color to be used to draw overlay of E-poles in 3D view.",
+        default=DEFAULT_E_POLES_COLOR,
+        subtype='COLOR',
+        size=4,
+        min=0.0,
+        max=1.0
+    )
+
+    overlay_star_poles_color: bpy.props.FloatVectorProperty(
+        name="overlay_star_poles_color",
+        description="Color to be used to draw overlay of *-poles in 3D view.",
+        default=DEFAULT_STAR_POLES_COLOR,
         subtype='COLOR',
         size=4,
         min=0.0,
@@ -60,9 +82,13 @@ class MeshstatsAddonPreferences(bpy.types.AddonPreferences):
     def draw(self, context):
         layout = self.layout
         layout.label(text="Overlay Preferences")
-        layout.prop(self, "overlay_tris_color")
-        layout.prop(self, "overlay_ngons_color")
-        layout.prop(self, "overlay_poles_color")
+        col = layout.column(align=True)
+        col.prop(self, "overlay_tris_color")
+        col.prop(self, "overlay_ngons_color")
+        col = layout.column(align=True)
+        col.prop(self, "overlay_e_poles_color")
+        col.prop(self, "overlay_n_poles_color")
+        col.prop(self, "overlay_star_poles_color")
         layout.operator(MeshstatsResetSettings.bl_idname)
 
 
@@ -109,7 +135,9 @@ class MeshstatsResetSettings(bpy.types.Operator):
         addon_prefs = context.preferences.addons[ADDON_NAME].preferences
         addon_prefs.overlay_tris_color = DEFAULT_TRIS_OUTLINE_COLOR
         addon_prefs.overlay_ngons_color = DEFAULT_NGONS_OUTLINE_COLOR
-        addon_prefs.overlay_poles_color = DEFAULT_POLES_COLOR
+        addon_prefs.overlay_e_poles_color = DEFAULT_E_POLES_COLOR
+        addon_prefs.overlay_n_poles_color = DEFAULT_N_POLES_COLOR
+        addon_prefs.overlay_star_poles_color = DEFAULT_STAR_POLES_COLOR
         return {'FINISHED'}
 
 

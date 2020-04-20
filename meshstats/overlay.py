@@ -44,7 +44,9 @@ def draw_callback():
     addon_prefs = context.preferences.addons[ADDON_NAME].preferences
     color_tris = addon_prefs.overlay_tris_color
     color_ngons = addon_prefs.overlay_ngons_color
-    color_poles = addon_prefs.overlay_poles_color
+    color_n_poles = addon_prefs.overlay_n_poles_color
+    color_e_poles = addon_prefs.overlay_e_poles_color
+    color_star_poles = addon_prefs.overlay_star_poles_color
 
     uniform_shader = gpu.shader.from_builtin('3D_UNIFORM_COLOR')
     smooth_shader = gpu.shader.from_builtin('3D_SMOOTH_COLOR')
@@ -75,21 +77,21 @@ def draw_callback():
             context,
             uniform_shader,
             smooth_shader,
-            color_poles,
+            color_n_poles,
             mesh_cache.n_poles
         )
         _draw_overlay_poles(
             context,
             uniform_shader,
             smooth_shader,
-            color_poles,
+            color_e_poles,
             mesh_cache.e_poles
         )
         _draw_overlay_poles(
             context,
             uniform_shader,
             smooth_shader,
-            color_poles,
+            color_star_poles,
             mesh_cache.star_poles
         )
 
