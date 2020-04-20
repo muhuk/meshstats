@@ -27,7 +27,7 @@ import mathutils
 
 from meshstats.context import get_object
 from meshstats.face import (FaceTri, FaceNgon)
-from meshstats.pole import (EPole, GenericPole, Pole, NPole)
+from meshstats.pole import (EPole, NPole, StarPole)
 
 
 @dataclasses.dataclass(eq=False)
@@ -42,7 +42,15 @@ class Mesh:
         init=False,
         default_factory=list
     )
-    poles: typing.List[Pole] = dataclasses.field(
+    n_poles: typing.List[NPole] = dataclasses.field(
+        init=False,
+        default_factory=list
+    )
+    e_poles: typing.List[EPole] = dataclasses.field(
+        init=False,
+        default_factory=list
+    )
+    star_poles: typing.List[StarPole] = dataclasses.field(
         init=False,
         default_factory=list
     )
@@ -107,17 +115,17 @@ class Mesh:
                     [e.other_vert(vertex).co for e in vertex.link_edges]
                 )
                 if edge_count == 3:
-                    self.poles.append(NPole(
+                    self.n_poles.append(NPole(
                         center=copy.deepcopy(vertex.co),
                         spokes=tuple(spokes)
                     ))
                 elif edge_count == 5:
-                    self.poles.append(EPole(
+                    self.e_poles.append(EPole(
                         center=copy.deepcopy(vertex.co),
                         spokes=tuple(spokes)
                     ))
                 elif edge_count > 5:
-                    self.poles.append(GenericPole(
+                    self.star_poles.append(StarPole(
                         center=copy.deepcopy(vertex.co),
                         spokes=list(spokes)
                     ))

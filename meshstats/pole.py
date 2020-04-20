@@ -50,6 +50,6 @@ class NPole(Pole):
 
 
 @dataclass(frozen=True)
-class GenericPole(Pole):
+class StarPole(Pole):
     center: mathutils.Vector
     spokes: List[mathutils.Vector]

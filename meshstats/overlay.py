@@ -76,7 +76,21 @@ def draw_callback():
             uniform_shader,
             smooth_shader,
             color_poles,
-            mesh_cache.poles
+            mesh_cache.n_poles
+        )
+        _draw_overlay_poles(
+            context,
+            uniform_shader,
+            smooth_shader,
+            color_poles,
+            mesh_cache.e_poles
+        )
+        _draw_overlay_poles(
+            context,
+            uniform_shader,
+            smooth_shader,
+            color_poles,
+            mesh_cache.star_poles
         )
 
     # Reset defaults
