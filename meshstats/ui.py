@@ -26,7 +26,8 @@ from meshstats.icon import get_icon
 class MeshstatsPanel(bpy.types.Panel):
     @staticmethod
     def _draw_overlay_options(context, layout):
-        row1 = layout.row(align=True)
+        col = layout.column(align=True)
+        row1 = col.row(align=True)
         row1.prop(
             context.scene.meshstats,
             "overlay_tris",
@@ -39,7 +40,7 @@ class MeshstatsPanel(bpy.types.Panel):
             icon_value=get_icon("overlay_ngons").icon_id,
             text="Ngons"
         )
-        row2 = layout.row(align=True)
+        row2 = col.row(align=True)
         row2.prop(
             context.scene.meshstats,
             "overlay_n_poles",
@@ -80,22 +81,23 @@ class VIEW3D_PT_meshstats(MeshstatsPanel):
                 text="Mesh statistics is only available for meshes."
             )
         else:
-            if mesh.get_cache() is not None:
-                self._draw_summary_table(self.layout.box())
-                self._draw_budget(context, self.layout.box())
-                overlay_box = self.layout.box()
-                overlay_box.label(text="Overlay options")
-                self._draw_overlay_options(context, overlay_box)
+            mesh_cache = mesh.get_cache()
+            if mesh_cache is not None:
+                self._draw_summary_table(self.layout, mesh_cache)
+                self.layout.separator()
+                self._draw_budget(self.layout, context, mesh_cache)
+                self.layout.separator()
+                self.layout.label(text="Overlay options")
+                self._draw_overlay_options(context, self.layout)
             else:
                 self.layout.alert = True
                 self.layout.label(text="Calculating...")
                 self.layout.alert = False
 
     @staticmethod
-    def _draw_budget(context, layout):
+    def _draw_budget(layout, context, mesh_cache):
         obj = get_object(context)
         props = obj.meshstats
-        mesh_cache = mesh.get_cache()
 
         layout.label(text="Budget")
         col = layout.column(align=True)
@@ -114,10 +116,10 @@ class VIEW3D_PT_meshstats(MeshstatsPanel):
             ))
 
     @staticmethod
-    def _draw_summary_table(layout):
-        mesh_cache = mesh.get_cache()
+    def _draw_summary_table(layout, mesh_cache):
         layout.label(text="Face Count")
-        j = layout.grid_flow(columns=3)
+        box = layout.box()
+        j = box.grid_flow(columns=3)
         j.label(text="")
         j.label(text="Tris")
         j.label(text="Quads")
