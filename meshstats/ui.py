@@ -43,19 +43,19 @@ class MeshstatsPanel(bpy.types.Panel):
         row2.prop(
             context.scene.meshstats,
             "overlay_n_poles",
-            icon='OVERLAY',
+            icon_value=get_icon("overlay_n_poles").icon_id,
             text="N-poles"
         )
         row2.prop(
             context.scene.meshstats,
             "overlay_e_poles",
-            icon='OVERLAY',
+            icon_value=get_icon("overlay_e_poles").icon_id,
             text="E-poles"
         )
         row2.prop(
             context.scene.meshstats,
             "overlay_star_poles",
-            icon='OVERLAY',
+            icon_value=get_icon("overlay_star_poles").icon_id,
             text=" *-poles"
         )
 
