@@ -72,7 +72,7 @@ def draw_callback():
             color_ngons,
             mesh_cache.ngons
         )
-    if props.overlay_poles:
+    if props.overlay_n_poles:
         _draw_overlay_poles(
             context,
             uniform_shader,
@@ -80,6 +80,7 @@ def draw_callback():
             color_n_poles,
             mesh_cache.n_poles
         )
+    if props.overlay_e_poles:
         _draw_overlay_poles(
             context,
             uniform_shader,
@@ -87,6 +88,7 @@ def draw_callback():
             color_e_poles,
             mesh_cache.e_poles
         )
+    if props.overlay_star_poles:
         _draw_overlay_poles(
             context,
             uniform_shader,

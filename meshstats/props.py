@@ -152,8 +152,18 @@ class MeshstatsSceneProperties(bpy.types.PropertyGroup):
         description="Toggle overlay of ngons.",
         default=False
     )
-    overlay_poles: bpy.props.BoolProperty(
-        name="overlay_poles",
-        description="Toggle overlay of poles.",
+    overlay_n_poles: bpy.props.BoolProperty(
+        name="overlay_n_poles",
+        description="Toggle overlay of N-poles.",
+        default=False
+    )
+    overlay_e_poles: bpy.props.BoolProperty(
+        name="overlay_e_poles",
+        description="Toggle overlay of E-poles.",
+        default=False
+    )
+    overlay_star_poles: bpy.props.BoolProperty(
+        name="overlay_star_poles",
+        description="Toggle overlay of *-poles.",
         default=False
     )

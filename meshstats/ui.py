@@ -26,24 +26,37 @@ from meshstats.icon import get_icon
 class MeshstatsPanel(bpy.types.Panel):
     @staticmethod
     def _draw_overlay_options(context, layout):
-        row = layout.row(align=True)
-        row.prop(
+        row1 = layout.row(align=True)
+        row1.prop(
             context.scene.meshstats,
             "overlay_tris",
             icon_value=get_icon("overlay_tris").icon_id,
             text="Tris"
         )
-        row.prop(
+        row1.prop(
             context.scene.meshstats,
             "overlay_ngons",
             icon_value=get_icon("overlay_ngons").icon_id,
             text="Ngons"
         )
-        row.prop(
+        row2 = layout.row(align=True)
+        row2.prop(
             context.scene.meshstats,
-            "overlay_poles",
+            "overlay_n_poles",
             icon='OVERLAY',
-            text="Poles"
+            text="N-poles"
+        )
+        row2.prop(
+            context.scene.meshstats,
+            "overlay_e_poles",
+            icon='OVERLAY',
+            text="E-poles"
+        )
+        row2.prop(
+            context.scene.meshstats,
+            "overlay_star_poles",
+            icon='OVERLAY',
+            text=" *-poles"
         )
 
 
