@@ -142,6 +142,19 @@ class VIEW3D_PT_meshstats(MeshstatsPanel):
             + mesh_cache.ngons_percentage
         ))
 
+        layout.label(text="Poles")
+        box = layout.box()
+        j = box.grid_flow(columns=2)
+        j.label(text="N-poles")
+        j.label(text="E-poles")
+        j.label(text="*-poles")
+        j.label(text="Total")
+
+        j.label(text="{}".format(len(mesh_cache.n_poles)))
+        j.label(text="{}".format(len(mesh_cache.e_poles)))
+        j.label(text="{}".format(len(mesh_cache.star_poles)))
+        j.label(text="{}".format(mesh_cache.total_poles_count))
+
 
 class VIEW3D_PT_overlay_meshstats(MeshstatsPanel):
     bl_space_type = 'VIEW_3D'

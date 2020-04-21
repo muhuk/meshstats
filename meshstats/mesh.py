@@ -65,6 +65,8 @@ class Mesh:
     quads_percentage: int = dataclasses.field(init=False, default=0)
     ngons_percentage: int = dataclasses.field(init=False, default=0)
 
+    total_poles_count: int = dataclasses.field(init=False, default=0)
+
     def __post_init__(self):
         self._reset()
 
@@ -160,6 +162,9 @@ class Mesh:
         self.ngons_count = len(self.ngons)
         self.quads_count = self.face_count - self.tris_count - self.ngons_count
         self.tesellated_tris_count = len(bm.calc_loop_triangles())
+        self.total_poles_count = len(self.n_poles) \
+            + len(self.e_poles) \
+            + len(self.star_poles)
 
     def _update_percentages(self):
         self.tris_percentage = int(self.tris_count * 100.0 / self.face_count)
