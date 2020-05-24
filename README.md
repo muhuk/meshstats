@@ -30,7 +30,11 @@ Once you have enabled the addon, you should see a `Meshstats` panel under `Item`
 
 ### How to View Face Counts
 
-![tutorial_statistics_panel.gif](./img/tutorial_statistics_panel.gif)
+![how_to_view_face_counts.png](./img/how_to_view_face_counts.png)
+
+1. Select a mesh object.
+2. You must be in `Object Mode`.
+3. Open `3D Viewport's sidebar`, `Item` tab.
 
 ### How to Display Tri & Ngon Overlays
 
