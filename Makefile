@@ -8,8 +8,6 @@ SCRIPTS_DIR = ./scripts
 ICONS_DIR = "icons"
 ZIP_DIR = $(BUILD_DIR)/$(PACKAGE_NAME)
 
-BLENDER_PATH = ~/lib/blender/blender-2.82a-linux64/
-
 .DEFAULT_GOAL  := run
 
 .PHONY: clean build relase run tag version
@@ -26,6 +24,9 @@ build:
 check:
 	@flake8 --show-source $(SOURCE_DIR)
 
+check_blender:
+	@if [ -z "$$BLENDER_PATH" ]; then echo "Set BLENDER_PATH"; exit 1; fi
+
 clean:
 	@rm -rf $(BUILD_DIR)
 	@echo "Deleted $(BUILD_DIR)"
@@ -33,7 +34,7 @@ clean:
 release: clean check version build tag
 	@echo "Done"
 
-run: clean check build
+run: check_blender clean check build
 	ZIP_FILE=`realpath "$(BUILD_DIR)/$(PACKAGE_NAME).zip"` \
 	$(BLENDER_PATH)/blender -d \
 		--debug-python \
