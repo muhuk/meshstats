@@ -4,6 +4,8 @@
 
 ## [0.3] - 2020-05-24
 
+![screenshot_v0.3_1.jpeg](./img/screenshot_v0.3_1.jpeg)
+
 ### Added
 
 - Display poles in overlay.  You can enable this overlay in `Item ->
