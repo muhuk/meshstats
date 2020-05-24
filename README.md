@@ -26,19 +26,25 @@ See [CHANGELOG.md](./CHANGELOG.md) for release details.
 
 ## Usage
 
-Once you have enabled the addon, you should see a `Meshstats` panel under `Item` tab in 3D view sidebar (default shortcut is `N`).  Note that `Meshstats` panel is displayed only when the active object is a mesh.
+Once you have enabled the addon, you should see a `Meshstats` panel under
+`Item` tab in 3D view sidebar (default shortcut is `N`).  Note that
+`Meshstats` panel is displayed only when the active object is a mesh.
 
 ### How to View Face Counts
-
-![how_to_view_face_counts.png](./img/how_to_view_face_counts.png)
 
 1. Select a mesh object.
 2. You must be in `Object Mode`.
 3. Open `3D Viewport's sidebar`, `Item` tab.
 
+![how_to_view_face_counts.png](./img/how_to_view_face_counts.png)
+
 ### How to Display Tri & Ngon Overlays
 
-**TODO**
+![how_to_enable_overlays.png](./img/how_to_enable_overlays.png)
+
+1. Overlays must be enabled.
+2. Overlay options can be found in `Overlay` pop-up as well as in `Meshstats`
+   panel.
 
 ### How to Set Up a Face Budget
 
