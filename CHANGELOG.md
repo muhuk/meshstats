@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+## [0.3] - 2020-05-24
+
 ### Added
 
 - Display poles in overlay.  You can enable this overlay in `Item ->
@@ -45,6 +47,7 @@
 - Allow enabling & disabling the overlay.  This setting is saved with the
   scene.
 
-[Unreleased]: https://github.com/muhuk/meshstats/compare/v0.2...v0.1
-[0.2]: https://github.com/muhuk/meshstats/releases/tag/v0.1...HEAD
+[Unreleased]: https://github.com/muhuk/meshstats/compare/v0.3...HEAD
+[0.3]: https://github.com/muhuk/meshstats/compare/v0.2...v0.3
+[0.2]: https://github.com/muhuk/meshstats/compare/v0.1...v0.2
 [0.1]: https://github.com/muhuk/meshstats/releases/tag/v0.1
