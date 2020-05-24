@@ -34,18 +34,22 @@ Once you have enabled the addon, you should see a `Meshstats` panel under
 
 1. Select a mesh object.
 2. You must be in `Object Mode`.
-3. Open `3D Viewport's sidebar`, `Item` tab.
+3. Open `3D Viewport`'s sidebar, `Item` tab.
 
 ![how_to_view_face_counts.png](./img/how_to_view_face_counts.png)
 
 ### How to Display Tri & Ngon Overlays
 
-![how_to_enable_overlays.png](./img/how_to_enable_overlays.png)
-
 1. Overlays must be enabled.
 2. Overlay options can be found in `Overlay` pop-up as well as in `Meshstats`
    panel.
 
+![how_to_enable_overlays.png](./img/how_to_enable_overlays.png)
+
 ### How to Set Up a Face Budget
 
-**TODO**
+1. Select a mesh object.
+2. You must be in `Object Mode`.
+3. Open `3D Viewport`'s sidebar, `Item` tab.
+
+![how_to_set_face_budget.png](./img/how_to_set_face_budget.png)
