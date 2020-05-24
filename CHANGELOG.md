@@ -6,8 +6,15 @@
 
 - Display poles in overlay.  You can enable this overlay in `Item ->
   Meshstats` panel in 3D view.
+- Display pole statistics (below face statistics).
 - Added factory defaults for overlay colors.  Click `Reset Meshstats settings`
   button in addon preferences to return to factory defaults.
+- Overlay settings are now also available in overlay pop-over.
+
+### Changed
+
+- Meshstats overlays are only visible if viewport overlays are enabled.
+- Overlay colors are configured at addon level, not at scene level.
 
 ### Removed
 
