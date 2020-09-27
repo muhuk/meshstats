@@ -1,11 +1,12 @@
 NAME = "meshstats"
-VERSION = $(shell ack "\"version\":\s*\((\d+),\s*(\d+)\)" meshstats/__init__.py --output="\$$1.\$$2" --nocolor)
+VERSION = $(shell ack "\"version\":\s*\((\d+),\s*(\d+)\)" src/__init__.py --output="\$$1.\$$2" --nocolor)
 PACKAGE_NAME = $(NAME)-$(VERSION)
 
-SOURCE_DIR = $(NAME)
+SOURCE_DIR = ./src
 BUILD_DIR = ./release
 SCRIPTS_DIR = ./scripts
-ICONS_DIR = "icons"
+
+
 ZIP_DIR = $(BUILD_DIR)/$(PACKAGE_NAME)
 
 .DEFAULT_GOAL  := run
@@ -14,33 +15,20 @@ ZIP_DIR = $(BUILD_DIR)/$(PACKAGE_NAME)
 
 build:
 	@mkdir -p $(BUILD_DIR)/$(PACKAGE_NAME)
-	@rsync -av --exclude="__pycache__" ./$(SOURCE_DIR) $(BUILD_DIR)/$(PACKAGE_NAME)
-	@rsync -av ./$(ICONS_DIR)/*.png $(BUILD_DIR)/$(PACKAGE_NAME)/$(NAME)/$(ICONS_DIR)/
-	@cp COPYING.txt $(BUILD_DIR)/$(PACKAGE_NAME)/$(SOURCE_DIR)
-	@cd $(BUILD_DIR)/$(PACKAGE_NAME); zip -r "$(PACKAGE_NAME).zip" $(SOURCE_DIR)
+	@rsync -av --exclude="__pycache__" ./$(SOURCE_DIR)/ $(BUILD_DIR)/$(PACKAGE_NAME)/$(NAME)
+	@cp COPYING.txt $(BUILD_DIR)/$(PACKAGE_NAME)/$(NAME)
+	@cd $(BUILD_DIR)/$(PACKAGE_NAME); zip -r "$(PACKAGE_NAME).zip" $(NAME)
 	@mv $(BUILD_DIR)/$(PACKAGE_NAME)/$(PACKAGE_NAME).zip $(BUILD_DIR)/
 	@echo "Created '$(BUILD_DIR)/$(PACKAGE_NAME).zip'"
 
 check:
 	@flake8 --show-source $(SOURCE_DIR)
 
-check_blender:
-	@if [ -z "$$BLENDER_PATH" ]; then echo "Set BLENDER_PATH"; exit 1; fi
-
 clean:
 	@rm -rf $(BUILD_DIR)
 	@echo "Deleted $(BUILD_DIR)"
 
 release: clean check version build tag
-	@echo "Done"
-
-run: check_blender clean check build
-	ZIP_FILE=`realpath "$(BUILD_DIR)/$(PACKAGE_NAME).zip"` \
-	$(BLENDER_PATH)/blender -d \
-		--debug-python \
-		--factory-startup \
-		-P $(SCRIPTS_DIR)/install_addon.py \
-		./dev.blend
 	@echo "Done"
 
 tag:
