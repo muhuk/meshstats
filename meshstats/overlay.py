@@ -53,8 +53,6 @@ def draw_callback():
 
     uniform_shader = gpu.shader.from_builtin('3D_UNIFORM_COLOR')
     smooth_shader = gpu.shader.from_builtin('3D_SMOOTH_COLOR')
-    uniform_shader.bind()
-    smooth_shader.bind()
 
     bgl.glEnable(bgl.GL_BLEND)
     bgl.glLineWidth(3)
@@ -115,15 +113,16 @@ def _draw_overlay_faces(
     faded_alpha = min(color[3] * 0.15 + 0.1, color[3])
     faded_color = (color[0], color[1], color[2], faded_alpha)
 
-    for face in faces:
-        if _is_visible(context, face.center, face.normal):
+    shader.bind()
+    for face_ in faces:
+        if _is_visible(context, face_.center, face_.normal):
             shader.uniform_float("color", color)
         else:
             shader.uniform_float("color", faded_color)
         batch = gpu_extras.batch.batch_for_shader(
             shader,
             'LINE_LOOP',
-            {"pos": face.vertices}
+            {"pos": face_.vertices}
         )
         batch.draw(shader)
 
@@ -148,6 +147,7 @@ def _draw_overlay_poles(
             use_color = faded_color
 
         # Draw the center
+        uniform_shader.bind()
         uniform_shader.uniform_float("color", use_color)
         batch = gpu_extras.batch.batch_for_shader(
             uniform_shader,
@@ -157,6 +157,7 @@ def _draw_overlay_poles(
         batch.draw(uniform_shader)
 
         # Draw spokes
+        smooth_shader.bind()
         midpoints = [(pole.center + v) / 2 for v in pole.spokes]
         batch = gpu_extras.batch.batch_for_shader(
             smooth_shader,
