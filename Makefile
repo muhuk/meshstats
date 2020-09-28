@@ -2,7 +2,7 @@ NAME = "meshstats"
 VERSION = $(shell ack "\"version\":\s*\((\d+),\s*(\d+)\)" src/__init__.py --output="\$$1.\$$2" --nocolor)
 PACKAGE_NAME = $(NAME)-$(VERSION)
 
-SOURCE_DIR = ./src
+SOURCE_DIR = $(NAME)
 BUILD_DIR = ./release
 SCRIPTS_DIR = ./scripts
 
