@@ -24,7 +24,7 @@ else:
     # stdlib
     from itertools import (chain, repeat)
     from math import degrees
-    from typing import List
+    import typing
     # blender
     import bgl
     import bpy
@@ -38,7 +38,17 @@ else:
     from meshstats import (constants, face, mesh, pole)
 
 
+uniform_shader: typing.Optional[gpu.types.GPUShader] = None
+smooth_shader: typing.Optional[gpu.types.GPUShader] = None
+
+
 def draw_callback():
+    global uniform_shader, smooth_shader
+    if uniform_shader is None:
+        uniform_shader = gpu.shader.from_builtin('3D_UNIFORM_COLOR')
+    if smooth_shader is None:
+        smooth_shader = gpu.shader.from_builtin('3D_SMOOTH_COLOR')
+
     mesh_cache = mesh.get_cache()
     if bpy.context.space_data.overlay.show_overlays is False \
        or mesh_cache is None:
@@ -50,9 +60,6 @@ def draw_callback():
     color_n_poles = addon_prefs.overlay_n_poles_color
     color_e_poles = addon_prefs.overlay_e_poles_color
     color_star_poles = addon_prefs.overlay_star_poles_color
-
-    uniform_shader = gpu.shader.from_builtin('3D_UNIFORM_COLOR')
-    smooth_shader = gpu.shader.from_builtin('3D_SMOOTH_COLOR')
 
     bgl.glEnable(bgl.GL_BLEND)
     bgl.glLineWidth(3)
@@ -108,7 +115,7 @@ def _draw_overlay_faces(
         context: bpy.types.Context,
         shader: gpu.types.GPUShader,
         color: (float, float, float, float),
-        faces: List[face.Face]
+        faces: typing.List[face.Face]
 ):
     faded_alpha = min(color[3] * 0.15 + 0.1, color[3])
     faded_color = (color[0], color[1], color[2], faded_alpha)
@@ -132,7 +139,7 @@ def _draw_overlay_poles(
         uniform_shader: gpu.types.GPUShader,
         smooth_shader: gpu.types.GPUShader,
         color: (float, float, float, float),
-        poles: List[pole.Pole]
+        poles: typing.List[pole.Pole]
 ):
     faded_alpha = min(color[3] * 0.15 + 0.1, color[3])
     faded_color = (color[0], color[1], color[2], faded_alpha)
@@ -140,8 +147,8 @@ def _draw_overlay_poles(
 
     use_color = None
 
-    for pole in poles:
-        if _is_visible(context, pole.center):
+    for pole_ in poles:
+        if _is_visible(context, pole_.center):
             use_color = color
         else:
             use_color = faded_color
@@ -152,20 +159,20 @@ def _draw_overlay_poles(
         batch = gpu_extras.batch.batch_for_shader(
             uniform_shader,
             'POINTS',
-            {"pos": [pole.center]}
+            {"pos": [pole_.center]}
         )
         batch.draw(uniform_shader)
 
         # Draw spokes
         smooth_shader.bind()
-        midpoints = [(pole.center + v) / 2 for v in pole.spokes]
+        midpoints = [(pole_.center + v) / 2 for v in pole_.spokes]
         batch = gpu_extras.batch.batch_for_shader(
             smooth_shader,
             'LINES',
             {
-                "pos": list(chain(*zip(repeat(pole.center), midpoints))),
+                "pos": list(chain(*zip(repeat(pole_.center), midpoints))),
                 "color": list(
-                    chain(*repeat([use_color, zeroed_color], len(pole.spokes)))
+                    chain(*repeat([use_color, zeroed_color], len(pole_.spokes)))
                 )
             }
         )
