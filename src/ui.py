@@ -16,11 +16,14 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-import bpy
-
-from meshstats import mesh
-from meshstats.context import get_object
-from meshstats.icon import get_icon
+if "bpy" in locals():
+    import importlib
+    for mod in [meshstats_context, icon, mesh]:
+        importlib.reload(mod)
+else:
+    import bpy
+    from meshstats import context as meshstats_context
+    from meshstats import (icon, mesh)
 
 
 class MeshstatsPanel(bpy.types.Panel):
@@ -31,32 +34,32 @@ class MeshstatsPanel(bpy.types.Panel):
         row1.prop(
             context.scene.meshstats,
             "overlay_tris",
-            icon_value=get_icon("overlay_tris").icon_id,
+            icon_value=icon.get_icon("overlay_tris").icon_id,
             text="Tris"
         )
         row1.prop(
             context.scene.meshstats,
             "overlay_ngons",
-            icon_value=get_icon("overlay_ngons").icon_id,
+            icon_value=icon.get_icon("overlay_ngons").icon_id,
             text="Ngons"
         )
         row2 = col.row(align=True)
         row2.prop(
             context.scene.meshstats,
             "overlay_n_poles",
-            icon_value=get_icon("overlay_n_poles").icon_id,
+            icon_value=icon.get_icon("overlay_n_poles").icon_id,
             text="N-poles"
         )
         row2.prop(
             context.scene.meshstats,
             "overlay_e_poles",
-            icon_value=get_icon("overlay_e_poles").icon_id,
+            icon_value=icon.get_icon("overlay_e_poles").icon_id,
             text="E-poles"
         )
         row2.prop(
             context.scene.meshstats,
             "overlay_star_poles",
-            icon_value=get_icon("overlay_star_poles").icon_id,
+            icon_value=icon.get_icon("overlay_star_poles").icon_id,
             text=" *-poles"
         )
 
@@ -76,7 +79,7 @@ class VIEW3D_PT_meshstats(MeshstatsPanel):
             "active",
             filter='AVAILABLE'
         )
-        if get_object(context) is None:
+        if meshstats_context.get_object(context) is None:
             self.layout.label(
                 text="Mesh statistics is only available for meshes."
             )
@@ -96,7 +99,7 @@ class VIEW3D_PT_meshstats(MeshstatsPanel):
 
     @staticmethod
     def _draw_budget(layout, context, mesh_cache):
-        obj = get_object(context)
+        obj = meshstats_context.get_object(context)
         props = obj.meshstats
 
         layout.label(text="Budget")

@@ -16,23 +16,26 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-from itertools import (chain, repeat)
-from math import degrees
-from typing import List
-
-import bgl
-import bpy
-import bpy.types
-from bpy_extras.view3d_utils import location_3d_to_region_2d
-from bpy_extras.view3d_utils import region_2d_to_origin_3d
-import gpu
-import gpu_extras.batch
-import mathutils
-
-from meshstats import mesh
-from meshstats.constants import ADDON_NAME
-from meshstats.face import Face
-from meshstats.pole import Pole
+if "bpy" in locals():
+    import importlib
+    for mod in [constants, face, mesh, pole]:
+        importlib.reload(mod)
+else:
+    # stdlib
+    from itertools import (chain, repeat)
+    from math import degrees
+    from typing import List
+    # blender
+    import bgl
+    import bpy
+    import bpy.types
+    from bpy_extras.view3d_utils import location_3d_to_region_2d
+    from bpy_extras.view3d_utils import region_2d_to_origin_3d
+    import gpu
+    import gpu_extras.batch
+    import mathutils
+    # addon
+    from meshstats import (constants, face, mesh, pole)
 
 
 def draw_callback():
@@ -41,7 +44,7 @@ def draw_callback():
        or mesh_cache is None:
         return
     context = bpy.context
-    addon_prefs = context.preferences.addons[ADDON_NAME].preferences
+    addon_prefs = context.preferences.addons[constants.ADDON_NAME].preferences
     color_tris = addon_prefs.overlay_tris_color
     color_ngons = addon_prefs.overlay_ngons_color
     color_n_poles = addon_prefs.overlay_n_poles_color
@@ -107,7 +110,7 @@ def _draw_overlay_faces(
         context: bpy.types.Context,
         shader: gpu.types.GPUShader,
         color: (float, float, float, float),
-        faces: List[Face]
+        faces: List[face.Face]
 ):
     faded_alpha = min(color[3] * 0.15 + 0.1, color[3])
     faded_color = (color[0], color[1], color[2], faded_alpha)
@@ -130,7 +133,7 @@ def _draw_overlay_poles(
         uniform_shader: gpu.types.GPUShader,
         smooth_shader: gpu.types.GPUShader,
         color: (float, float, float, float),
-        poles: List[Pole]
+        poles: List[pole.Pole]
 ):
     faded_alpha = min(color[3] * 0.15 + 0.1, color[3])
     faded_color = (color[0], color[1], color[2], faded_alpha)

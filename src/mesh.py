@@ -16,41 +16,46 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-import copy
-import dataclasses
-from functools import reduce
-import typing
-
-import bmesh
-import bpy
-import mathutils
-
-from meshstats.context import get_object
-from meshstats.face import (FaceTri, FaceNgon)
-from meshstats.pole import (EPole, NPole, StarPole)
+if "bpy" in locals():
+    import importlib
+    for mod in [meshstats_context, face, pole]:
+        importlib.reload(mod)
+else:
+    # stdlib
+    import copy
+    import dataclasses
+    from functools import reduce
+    import typing
+    # blender
+    import bmesh
+    import bpy
+    import mathutils
+    # addon
+    from meshstats import context as meshstats_context
+    from meshstats import (face, pole)
 
 
 @dataclasses.dataclass(eq=False)
 class Mesh:
     obj: bpy.types.Object
 
-    tris: typing.List[FaceTri] = dataclasses.field(
+    tris: typing.List[face.FaceTri] = dataclasses.field(
         init=False,
         default_factory=list
     )
-    ngons: typing.List[FaceNgon] = dataclasses.field(
+    ngons: typing.List[face.FaceNgon] = dataclasses.field(
         init=False,
         default_factory=list
     )
-    n_poles: typing.List[NPole] = dataclasses.field(
+    n_poles: typing.List[pole.NPole] = dataclasses.field(
         init=False,
         default_factory=list
     )
-    e_poles: typing.List[EPole] = dataclasses.field(
+    e_poles: typing.List[pole.EPole] = dataclasses.field(
         init=False,
         default_factory=list
     )
-    star_poles: typing.List[StarPole] = dataclasses.field(
+    star_poles: typing.List[pole.StarPole] = dataclasses.field(
         init=False,
         default_factory=list
     )
@@ -81,7 +86,7 @@ class Mesh:
                 vertices = [copy.deepcopy(l.vert.co) for l in face.loops]
                 center = (vertices[0] + vertices[1] + vertices[2]) / 3
                 self.tris.append(
-                    FaceTri(
+                    face.FaceTri(
                         center=center,
                         vertices=tuple(vertices),
                         normal=copy.deepcopy(face.normal)
@@ -100,7 +105,7 @@ class Mesh:
                 )
                 center = m @ center
                 self.ngons.append(
-                    FaceNgon(
+                    face.FaceNgon(
                         center=center,
                         vertices=vertices,
                         normal=copy.deepcopy(face.normal),
@@ -117,17 +122,17 @@ class Mesh:
                     [e.other_vert(vertex).co for e in vertex.link_edges]
                 )
                 if edge_count == 3:
-                    self.n_poles.append(NPole(
+                    self.n_poles.append(pole.NPole(
                         center=copy.deepcopy(vertex.co),
                         spokes=tuple(spokes)
                     ))
                 elif edge_count == 5:
-                    self.e_poles.append(EPole(
+                    self.e_poles.append(pole.EPole(
                         center=copy.deepcopy(vertex.co),
                         spokes=tuple(spokes)
                     ))
                 elif edge_count > 5:
-                    self.star_poles.append(StarPole(
+                    self.star_poles.append(pole.StarPole(
                         center=copy.deepcopy(vertex.co),
                         spokes=list(spokes)
                     ))
@@ -231,7 +236,7 @@ def app__load_pre_handler(*args_):
 @bpy.app.handlers.persistent
 def app__depsgraph_update_post(scene, depsgraph):
     global cache
-    if get_object():
+    if meshstats_context.get_object():
         cache = Mesh(bpy.context.active_object)
         print("updated mesh cache to {}".format(bpy.context.active_object))
     else:

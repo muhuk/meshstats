@@ -16,25 +16,21 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-import bpy
-
-from meshstats.constants import (
-    ADDON_NAME,
-    DEFAULT_TRIS_OUTLINE_COLOR,
-    DEFAULT_NGONS_OUTLINE_COLOR,
-    DEFAULT_N_POLES_COLOR,
-    DEFAULT_E_POLES_COLOR,
-    DEFAULT_STAR_POLES_COLOR,
-)
+if "bpy" in locals():
+    import importlib
+    importlib.reload(constants)
+else:
+    import bpy
+    from meshstats import constants
 
 
 class MeshstatsAddonPreferences(bpy.types.AddonPreferences):
-    bl_idname = ADDON_NAME
+    bl_idname = constants.ADDON_NAME
 
     overlay_tris_color: bpy.props.FloatVectorProperty(
         name="overlay_tris_color",
         description="Color to be used to draw overlay of tris in 3D view.",
-        default=DEFAULT_TRIS_OUTLINE_COLOR,
+        default=constants.DEFAULT_TRIS_OUTLINE_COLOR,
         subtype='COLOR',
         size=4,
         min=0.0,
@@ -43,7 +39,7 @@ class MeshstatsAddonPreferences(bpy.types.AddonPreferences):
     overlay_ngons_color: bpy.props.FloatVectorProperty(
         name="overlay_ngons_color",
         description="Color to be used to draw overlay of ngons in 3D view.",
-        default=DEFAULT_NGONS_OUTLINE_COLOR,
+        default=constants.DEFAULT_NGONS_OUTLINE_COLOR,
         subtype='COLOR',
         size=4,
         min=0.0,
@@ -52,7 +48,7 @@ class MeshstatsAddonPreferences(bpy.types.AddonPreferences):
     overlay_n_poles_color: bpy.props.FloatVectorProperty(
         name="overlay_n_poles_color",
         description="Color to be used to draw overlay of N-poles in 3D view.",
-        default=DEFAULT_N_POLES_COLOR,
+        default=constants.DEFAULT_N_POLES_COLOR,
         subtype='COLOR',
         size=4,
         min=0.0,
@@ -62,7 +58,7 @@ class MeshstatsAddonPreferences(bpy.types.AddonPreferences):
     overlay_e_poles_color: bpy.props.FloatVectorProperty(
         name="overlay_e_poles_color",
         description="Color to be used to draw overlay of E-poles in 3D view.",
-        default=DEFAULT_E_POLES_COLOR,
+        default=constants.DEFAULT_E_POLES_COLOR,
         subtype='COLOR',
         size=4,
         min=0.0,
@@ -72,7 +68,7 @@ class MeshstatsAddonPreferences(bpy.types.AddonPreferences):
     overlay_star_poles_color: bpy.props.FloatVectorProperty(
         name="overlay_star_poles_color",
         description="Color to be used to draw overlay of *-poles in 3D view.",
-        default=DEFAULT_STAR_POLES_COLOR,
+        default=constants.DEFAULT_STAR_POLES_COLOR,
         subtype='COLOR',
         size=4,
         min=0.0,
@@ -132,12 +128,12 @@ class MeshstatsResetSettings(bpy.types.Operator):
     bl_label = "Reset Meshstats settings"
 
     def execute(self, context):
-        addon_prefs = context.preferences.addons[ADDON_NAME].preferences
-        addon_prefs.overlay_tris_color = DEFAULT_TRIS_OUTLINE_COLOR
-        addon_prefs.overlay_ngons_color = DEFAULT_NGONS_OUTLINE_COLOR
-        addon_prefs.overlay_e_poles_color = DEFAULT_E_POLES_COLOR
-        addon_prefs.overlay_n_poles_color = DEFAULT_N_POLES_COLOR
-        addon_prefs.overlay_star_poles_color = DEFAULT_STAR_POLES_COLOR
+        addon_prefs = context.preferences.addons[constants.ADDON_NAME].preferences
+        addon_prefs.overlay_tris_color = constants.DEFAULT_TRIS_OUTLINE_COLOR
+        addon_prefs.overlay_ngons_color = constants.DEFAULT_NGONS_OUTLINE_COLOR
+        addon_prefs.overlay_e_poles_color = constants.DEFAULT_E_POLES_COLOR
+        addon_prefs.overlay_n_poles_color = constants.DEFAULT_N_POLES_COLOR
+        addon_prefs.overlay_star_poles_color = constants.DEFAULT_STAR_POLES_COLOR
         return {'FINISHED'}
 
 
