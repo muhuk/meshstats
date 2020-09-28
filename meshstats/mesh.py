@@ -81,20 +81,20 @@ class Mesh:
         bm.transform(m)
         m_inverted = m.inverted()
 
-        for face in bm.faces:
-            if len(face.loops) == 3:
-                vertices = [copy.deepcopy(l.vert.co) for l in face.loops]
+        for face_ in bm.faces:
+            if len(face_.loops) == 3:
+                vertices = [copy.deepcopy(l.vert.co) for l in face_.loops]
                 center = (vertices[0] + vertices[1] + vertices[2]) / 3
                 self.tris.append(
                     face.FaceTri(
                         center=center,
                         vertices=tuple(vertices),
-                        normal=copy.deepcopy(face.normal)
+                        normal=copy.deepcopy(face_.normal)
                     )
                 )
                 del vertices, center
-            elif len(face.loops) > 4:
-                vertices = [copy.deepcopy(l.vert.co) for l in face.loops]
+            elif len(face_.loops) > 4:
+                vertices = [copy.deepcopy(l.vert.co) for l in face_.loops]
                 # vertices are in world coords so we need to transform center
                 # to object coords first to be able to call
                 # closest_point_on_mesh then convert back to world coords.
@@ -108,7 +108,7 @@ class Mesh:
                     face.FaceNgon(
                         center=center,
                         vertices=vertices,
-                        normal=copy.deepcopy(face.normal),
+                        normal=copy.deepcopy(face_.normal),
                     )
                 )
                 del vertices, center
@@ -236,8 +236,8 @@ def app__load_pre_handler(*args_):
 @bpy.app.handlers.persistent
 def app__depsgraph_update_post(scene, depsgraph):
     global cache
-    if meshstats_context.get_object():
-        cache = Mesh(bpy.context.active_object)
-        print("updated mesh cache to {}".format(bpy.context.active_object))
+    obj = meshstats_context.get_object()
+    if obj:
+        cache = Mesh(obj)
     else:
         cache = None
