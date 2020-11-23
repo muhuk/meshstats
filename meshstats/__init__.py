@@ -72,7 +72,9 @@ def register():
 
     # Register Handlers
     bpy.app.handlers.load_pre.append(mesh.app__load_pre_handler)
-    bpy.app.handlers.depsgraph_update_post.append(mesh.app__depsgraph_update_post)
+    bpy.app.handlers.depsgraph_update_post.append(
+        mesh.app__depsgraph_update_post
+    )
     draw_handler = bpy.types.SpaceView3D.draw_handler_add(
         overlay.draw_callback,
         (),
@@ -85,7 +87,9 @@ def unregister():
     # Unregister Handlers
     bpy.types.SpaceView3D.draw_handler_remove(draw_handler, 'WINDOW')
     bpy.app.handlers.load_pre.remove(mesh.app__load_pre_handler)
-    bpy.app.handlers.depsgraph_update_post.remove(mesh.app__depsgraph_update_post)
+    bpy.app.handlers.depsgraph_update_post.remove(
+        mesh.app__depsgraph_update_post
+    )
 
     # Unregister UI
     bpy.utils.unregister_class(ui.VIEW3D_PT_overlay_meshstats)
