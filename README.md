@@ -6,8 +6,13 @@ meshstats is released with [GPL license](./COPYING.txt), same as [Blender](https
 
 ## Features
 
-- Display how many tris, quads & ngons the selected mesh has.
-- Draw outlines of tris & ngons in the 3D view.
+- Display counts for tris, quads & ngons.
+- Display counts for e-poles (vertices with 5 edges), n-poles (vertices with 3
+  edges) and *-poles (vertices with 6 or more edges - fan center).
+- Set a polygon budget for mesh objects and display how much of it is
+  utilized.
+- Display quads & tris as an overlay. (in object mode)
+- Display e-poles, n-poles & *-poles as an overlay. (in object mode)
 
 See [CHANGELOG.md](./CHANGELOG.md) for release details.
 
