@@ -2,6 +2,17 @@
 
 ## [Unreleased]
 
+## [1.0] - 2020-11-23
+
+### Changed
+- Due to [changes in Blender
+  API](https://wiki.blender.org/wiki/Reference/Release_Notes/2.91/Python_API)
+  minimum version for this addon is not `2.91`.
+
+### Fixed
+- Fixed first draw call using the wrong shader.  See
+  [1bb3655](https://github.com/muhuk/meshstats/commit/49bbf831af27992446a459f806a9768bc1bb3655).
+
 ## [0.3] - 2020-05-24
 
 ![screenshot_v0.3_1.jpeg](./img/screenshot_v0.3_1.jpeg)
@@ -49,7 +60,8 @@
 - Allow enabling & disabling the overlay.  This setting is saved with the
   scene.
 
-[Unreleased]: https://github.com/muhuk/meshstats/compare/v0.3...HEAD
+[Unreleased]: https://github.com/muhuk/meshstats/compare/v1.0...HEAD
+[1.0]: https://github.com/muhuk/meshstats/compare/v0.3...v1.0
 [0.3]: https://github.com/muhuk/meshstats/compare/v0.2...v0.3
 [0.2]: https://github.com/muhuk/meshstats/compare/v0.1...v0.2
 [0.1]: https://github.com/muhuk/meshstats/releases/tag/v0.1
