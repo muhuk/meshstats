@@ -199,7 +199,7 @@ def _is_visible(
     if normal and degrees(ray.angle(normal)) < 90:
         return False
     (result, loc, _, _, obj, _) = context.scene.ray_cast(
-        context.view_layer,
+        context.view_layer.depsgraph,
         ray_origin,
         ray
     )
