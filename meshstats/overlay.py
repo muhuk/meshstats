@@ -172,7 +172,10 @@ def _draw_overlay_poles(
             {
                 "pos": list(chain(*zip(repeat(pole_.center), midpoints))),
                 "color": list(
-                    chain(*repeat([use_color, zeroed_color], len(pole_.spokes)))
+                    chain(*repeat(
+                        [use_color, zeroed_color],
+                        len(pole_.spokes)
+                    ))
                 )
             }
         )

@@ -18,7 +18,7 @@
 
 if "bpy" in locals():
     import importlib
-    importlib.reload(constants)
+    importlib.reload(constants)  # noqa: F821
 else:
     import bpy
     from meshstats import constants
@@ -128,12 +128,14 @@ class MeshstatsResetSettings(bpy.types.Operator):
     bl_label = "Reset Meshstats settings"
 
     def execute(self, context):
-        addon_prefs = context.preferences.addons[constants.ADDON_NAME].preferences
+        addon_prefs = \
+            context.preferences.addons[constants.ADDON_NAME].preferences
         addon_prefs.overlay_tris_color = constants.DEFAULT_TRIS_OUTLINE_COLOR
         addon_prefs.overlay_ngons_color = constants.DEFAULT_NGONS_OUTLINE_COLOR
         addon_prefs.overlay_e_poles_color = constants.DEFAULT_E_POLES_COLOR
         addon_prefs.overlay_n_poles_color = constants.DEFAULT_N_POLES_COLOR
-        addon_prefs.overlay_star_poles_color = constants.DEFAULT_STAR_POLES_COLOR
+        addon_prefs.overlay_star_poles_color = \
+            constants.DEFAULT_STAR_POLES_COLOR
         return {'FINISHED'}
 
 
