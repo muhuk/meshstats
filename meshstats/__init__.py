@@ -18,7 +18,7 @@
 
 if "bpy" in locals():
     import importlib
-    for mod in [icon, mesh, overlay, props, ui]:
+    for mod in [icon, mesh, overlay, props, ui]:  # noqa: F821
         importlib.reload(mod)
 else:
     import bpy

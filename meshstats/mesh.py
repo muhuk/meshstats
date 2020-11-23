@@ -18,7 +18,7 @@
 
 if "bpy" in locals():
     import importlib
-    for mod in [meshstats_context, face, pole]:
+    for mod in [meshstats_context, face, pole]:  # noqa: F821
         importlib.reload(mod)
 else:
     # stdlib
