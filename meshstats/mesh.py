@@ -74,7 +74,28 @@ class Mesh:
 
     def __post_init__(self):
         self._reset()
+        self._update()
 
+    @property
+    def face_budget_utilization(self):
+        if self.obj.meshstats.face_budget_on:
+            props = self.obj.meshstats
+            if props.face_budget_type == 'TRIS':
+                return float(self.tesellated_tris_count) / props.face_budget
+            elif props.face_budget_type == 'QUADS_ONLY':
+                return float(self.quads_count) / props.face_budget
+            elif props.face_budget_type == 'FACES':
+                return float(self.face_count) / props.face_budget
+            else:
+                raise RuntimeError(
+                    "Unknown face_budget_type {}".format(
+                        props.face_budget_type
+                    )
+                )
+        else:
+            return None
+
+    def _update(self):
         bm = bmesh.new()
         bm.from_mesh(self.obj.data)
         m = mathutils.Matrix(self.obj.matrix_world)
@@ -141,25 +162,6 @@ class Mesh:
         self._update_percentages()
 
         bm.free()
-
-    @property
-    def face_budget_utilization(self):
-        if self.obj.meshstats.face_budget_on:
-            props = self.obj.meshstats
-            if props.face_budget_type == 'TRIS':
-                return float(self.tesellated_tris_count) / props.face_budget
-            elif props.face_budget_type == 'QUADS_ONLY':
-                return float(self.quads_count) / props.face_budget
-            elif props.face_budget_type == 'FACES':
-                return float(self.face_count) / props.face_budget
-            else:
-                raise RuntimeError(
-                    "Unknown face_budget_type {}".format(
-                        props.face_budget_type
-                    )
-                )
-        else:
-            return None
 
     def _update_counts(self, bm):
         self.face_count = len(bm.faces)
