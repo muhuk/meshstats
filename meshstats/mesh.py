@@ -95,7 +95,9 @@ class Mesh:
         else:
             return None
 
-    def _calculate_faces(self, bm: bmesh.BMesh, transform: mathutils.Matrix):
+    def _calculate_faces(self,
+                         bm: bmesh.types.BMesh,
+                         transform: mathutils.Matrix):
         inverse_transform = transform.inverted()
         for face_ in bm.faces:
             if len(face_.loops) == 3:
@@ -129,7 +131,7 @@ class Mesh:
                 )
                 del vertices, center
 
-    def _calculate_poles(self, bm: bmesh.BMesh):
+    def _calculate_poles(self, bm: bmesh.types.BMesh):
         for vertex in bm.verts:
             edge_count = len(
                 [edge for edge in vertex.link_edges if not edge.is_boundary]
@@ -168,7 +170,7 @@ class Mesh:
 
         bm.free()
 
-    def _update_counts(self, bm: bmesh.BMesh):
+    def _update_counts(self, bm: bmesh.types.BMesh):
         self.face_count = len(bm.faces)
         self.tris_count = len(self.tris)
         self.ngons_count = len(self.ngons)
