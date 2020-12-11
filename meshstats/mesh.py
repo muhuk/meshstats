@@ -95,13 +95,8 @@ class Mesh:
         else:
             return None
 
-    def _update(self):
-        bm = bmesh.new()
-        bm.from_mesh(self.obj.data)
-        m = mathutils.Matrix(self.obj.matrix_world)
-        bm.transform(m)
-        m_inverted = m.inverted()
-
+    def _calculate_faces(self, bm: bmesh.BMesh, transform: mathutils.Matrix):
+        inverse_transform = transform.inverted()
         for face_ in bm.faces:
             if len(face_.loops) == 3:
                 vertices = [copy.deepcopy(l.vert.co) for l in face_.loops]
@@ -120,11 +115,11 @@ class Mesh:
                 # to object coords first to be able to call
                 # closest_point_on_mesh then convert back to world coords.
                 center = reduce(lambda a, b: a + b, vertices) / len(vertices)
-                center = m_inverted @ center
+                center = inverse_transform @ center
                 center = mathutils.Vector(
                     self.obj.closest_point_on_mesh(center)[1]
                 )
-                center = m @ center
+                center = transform @ center
                 self.ngons.append(
                     face.FaceNgon(
                         center=center,
@@ -133,6 +128,14 @@ class Mesh:
                     )
                 )
                 del vertices, center
+
+    def _update(self):
+        bm = bmesh.new()
+        bm.from_mesh(self.obj.data)
+        m = mathutils.Matrix(self.obj.matrix_world)
+        bm.transform(m)
+
+        self._calculate_faces(bm, m)
 
         for vertex in bm.verts:
             edge_count = len(
@@ -163,7 +166,7 @@ class Mesh:
 
         bm.free()
 
-    def _update_counts(self, bm):
+    def _update_counts(self, bm: bmesh.BMesh):
         self.face_count = len(bm.faces)
         self.tris_count = len(self.tris)
         self.ngons_count = len(self.ngons)
