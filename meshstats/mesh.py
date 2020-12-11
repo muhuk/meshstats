@@ -129,14 +129,7 @@ class Mesh:
                 )
                 del vertices, center
 
-    def _update(self):
-        bm = bmesh.new()
-        bm.from_mesh(self.obj.data)
-        m = mathutils.Matrix(self.obj.matrix_world)
-        bm.transform(m)
-
-        self._calculate_faces(bm, m)
-
+    def _calculate_poles(self, bm: bmesh.BMesh):
         for vertex in bm.verts:
             edge_count = len(
                 [edge for edge in vertex.link_edges if not edge.is_boundary]
@@ -160,6 +153,15 @@ class Mesh:
                         center=copy.deepcopy(vertex.co),
                         spokes=list(spokes)
                     ))
+
+    def _update(self):
+        bm = bmesh.new()
+        bm.from_mesh(self.obj.data)
+        m = mathutils.Matrix(self.obj.matrix_world)
+        bm.transform(m)
+
+        self._calculate_faces(bm, m)
+        self._calculate_poles(bm)
 
         self._update_counts(bm)
         self._update_percentages()
