@@ -239,7 +239,7 @@ def app__load_pre_handler(*args_):
 def app__depsgraph_update_post(scene, depsgraph):
     global cache
     obj = meshstats_context.get_object()
-    if obj:
+    if obj is not None:
         cache = Mesh(obj)
     else:
         cache = None
