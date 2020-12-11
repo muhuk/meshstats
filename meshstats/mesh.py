@@ -95,6 +95,16 @@ class Mesh:
         else:
             return None
 
+    def _calculate_counts(self, bm: bmesh.types.BMesh):
+        self.face_count = len(bm.faces)
+        self.tris_count = len(self.tris)
+        self.ngons_count = len(self.ngons)
+        self.quads_count = self.face_count - self.tris_count - self.ngons_count
+        self.tesellated_tris_count = len(bm.calc_loop_triangles())
+        self.total_poles_count = len(self.n_poles) \
+            + len(self.e_poles) \
+            + len(self.star_poles)
+
     def _calculate_faces(self,
                          bm: bmesh.types.BMesh,
                          transform: mathutils.Matrix):
@@ -131,56 +141,7 @@ class Mesh:
                 )
                 del vertices, center
 
-    def _calculate_poles(self, bm: bmesh.types.BMesh):
-        for vertex in bm.verts:
-            edge_count = len(
-                [edge for edge in vertex.link_edges if not edge.is_boundary]
-            )
-            if edge_count == 3 or edge_count >= 5:
-                spokes = copy.deepcopy(
-                    [e.other_vert(vertex).co for e in vertex.link_edges]
-                )
-                if edge_count == 3:
-                    self.n_poles.append(pole.NPole(
-                        center=copy.deepcopy(vertex.co),
-                        spokes=tuple(spokes)
-                    ))
-                elif edge_count == 5:
-                    self.e_poles.append(pole.EPole(
-                        center=copy.deepcopy(vertex.co),
-                        spokes=tuple(spokes)
-                    ))
-                elif edge_count > 5:
-                    self.star_poles.append(pole.StarPole(
-                        center=copy.deepcopy(vertex.co),
-                        spokes=list(spokes)
-                    ))
-
-    def _update(self):
-        bm = bmesh.new()
-        bm.from_mesh(self.obj.data)
-        m = mathutils.Matrix(self.obj.matrix_world)
-        bm.transform(m)
-
-        self._calculate_faces(bm, m)
-        self._calculate_poles(bm)
-
-        self._update_counts(bm)
-        self._update_percentages()
-
-        bm.free()
-
-    def _update_counts(self, bm: bmesh.types.BMesh):
-        self.face_count = len(bm.faces)
-        self.tris_count = len(self.tris)
-        self.ngons_count = len(self.ngons)
-        self.quads_count = self.face_count - self.tris_count - self.ngons_count
-        self.tesellated_tris_count = len(bm.calc_loop_triangles())
-        self.total_poles_count = len(self.n_poles) \
-            + len(self.e_poles) \
-            + len(self.star_poles)
-
-    def _update_percentages(self):
+    def _calculate_percentages(self):
         self.tris_percentage = int(self.tris_count * 100.0 / self.face_count)
         self.quads_percentage = int(self.quads_count * 100.0 / self.face_count)
         self.ngons_percentage = int(self.ngons_count * 100.0 / self.face_count)
@@ -216,6 +177,45 @@ class Mesh:
                 self.tris_percentage += 1
             else:
                 self.quads_percentage += 1
+
+    def _calculate_poles(self, bm: bmesh.types.BMesh):
+        for vertex in bm.verts:
+            edge_count = len(
+                [edge for edge in vertex.link_edges if not edge.is_boundary]
+            )
+            if edge_count == 3 or edge_count >= 5:
+                spokes = copy.deepcopy(
+                    [e.other_vert(vertex).co for e in vertex.link_edges]
+                )
+                if edge_count == 3:
+                    self.n_poles.append(pole.NPole(
+                        center=copy.deepcopy(vertex.co),
+                        spokes=tuple(spokes)
+                    ))
+                elif edge_count == 5:
+                    self.e_poles.append(pole.EPole(
+                        center=copy.deepcopy(vertex.co),
+                        spokes=tuple(spokes)
+                    ))
+                elif edge_count > 5:
+                    self.star_poles.append(pole.StarPole(
+                        center=copy.deepcopy(vertex.co),
+                        spokes=list(spokes)
+                    ))
+
+    def _update(self):
+        bm = bmesh.new()
+        bm.from_mesh(self.obj.data)
+        m = mathutils.Matrix(self.obj.matrix_world)
+        bm.transform(m)
+
+        self._calculate_faces(bm, m)
+        self._calculate_poles(bm)
+
+        self._calculate_counts(bm)
+        self._calculate_percentages()
+
+        bm.free()
 
     def _reset(self):
         self.tris = []
