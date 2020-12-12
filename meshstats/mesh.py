@@ -37,8 +37,6 @@ else:
 
 @dataclasses.dataclass(eq=False)
 class Mesh:
-    obj: bpy.types.Object
-
     tris: typing.List[face.FaceTri] = dataclasses.field(
         init=False,
         default_factory=list
@@ -74,7 +72,6 @@ class Mesh:
 
     def __post_init__(self):
         self._reset()
-        self._update()
 
     @property
     def face_budget_utilization(self):
@@ -94,6 +91,20 @@ class Mesh:
                 )
         else:
             return None
+
+    def update(self, obj: bpy.types.Object):
+        bm = bmesh.new()
+        bm.from_mesh(obj.data)
+        m = mathutils.Matrix(obj.matrix_world)
+        bm.transform(m)
+
+        self._calculate_faces(bm, m)
+        self._calculate_poles(bm)
+
+        self._calculate_counts(bm)
+        self._calculate_percentages()
+
+        bm.free()
 
     def _calculate_counts(self, bm: bmesh.types.BMesh):
         self.face_count = len(bm.faces)
@@ -203,20 +214,6 @@ class Mesh:
                         spokes=list(spokes)
                     ))
 
-    def _update(self):
-        bm = bmesh.new()
-        bm.from_mesh(self.obj.data)
-        m = mathutils.Matrix(self.obj.matrix_world)
-        bm.transform(m)
-
-        self._calculate_faces(bm, m)
-        self._calculate_poles(bm)
-
-        self._calculate_counts(bm)
-        self._calculate_percentages()
-
-        bm.free()
-
     def _reset(self):
         self.tris = []
         self.ngons = []
@@ -247,6 +244,7 @@ def app__depsgraph_update_post(scene, depsgraph):
     global cache
     obj = meshstats_context.get_object()
     if obj is not None:
-        cache = Mesh(obj)
+        cache = Mesh()
+        cache.update(obj)
     else:
         cache = None
