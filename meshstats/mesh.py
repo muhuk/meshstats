@@ -26,6 +26,7 @@ else:
     import dataclasses
     from functools import reduce
     import typing
+    import logging
     # blender
     import bmesh
     import bpy
@@ -33,6 +34,9 @@ else:
     # addon
     from meshstats import context as meshstats_context
     from meshstats import (face, pole)
+
+
+log = logging.getLogger(__name__)
 
 
 @dataclasses.dataclass(eq=False)
@@ -226,13 +230,27 @@ class Mesh:
         self.ngons_percentage = 0
 
 
-cache: typing.Dict[str, Mesh] = {}
+class Cache:
+    def __init__(self):
+        self.d = {}
+
+    def update(self, obj: bpy.types.Object) -> None:
+        log.debug("Updating meshstats data for {0}".format(obj.name))
+        m = Mesh()
+        m.update(obj)
+        self.d[hash(obj)] = m
+
+    def get(self, obj: bpy.types.Object) -> typing.Optional[Mesh]:
+        return self.d.get(hash(obj))
+
+
+cache = Cache()
 
 
 def get_cache() -> typing.Optional[Mesh]:
     obj = meshstats_context.get_object()
     if obj is not None:
-        return cache.get(obj.name)
+        return cache.get(obj)
     else:
         return None
 
@@ -240,7 +258,7 @@ def get_cache() -> typing.Optional[Mesh]:
 @bpy.app.handlers.persistent
 def app__load_pre_handler(*args_):
     global cache
-    cache = {}
+    cache = Cache()
 
 
 @bpy.app.handlers.persistent
@@ -248,6 +266,4 @@ def app__depsgraph_update_post(scene, depsgraph):
     global cache
     obj = meshstats_context.get_object()
     if obj is not None:
-        m = Mesh()
-        m.update(obj)
-        cache[obj.name] = m
+        cache.update(obj)
