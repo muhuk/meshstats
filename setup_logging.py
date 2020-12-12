@@ -1,3 +1,7 @@
+# Symlink or copy this file to your script startup folder:
+#
+#   $HOME/.config/blender/{blender_version}/scripts/startup/
+
 import logging
 
 
