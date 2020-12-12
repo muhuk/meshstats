@@ -226,17 +226,21 @@ class Mesh:
         self.ngons_percentage = 0
 
 
-cache: typing.Optional[Mesh] = None
+cache: typing.Dict[str, Mesh] = {}
 
 
-def get_cache():
-    return cache
+def get_cache() -> typing.Optional[Mesh]:
+    obj = meshstats_context.get_object()
+    if obj is not None:
+        return cache.get(obj.name)
+    else:
+        return None
 
 
 @bpy.app.handlers.persistent
 def app__load_pre_handler(*args_):
     global cache
-    cache = None
+    cache = {}
 
 
 @bpy.app.handlers.persistent
@@ -244,7 +248,6 @@ def app__depsgraph_update_post(scene, depsgraph):
     global cache
     obj = meshstats_context.get_object()
     if obj is not None:
-        cache = Mesh()
-        cache.update(obj)
-    else:
-        cache = None
+        m = Mesh()
+        m.update(obj)
+        cache[obj.name] = m
