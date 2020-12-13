@@ -25,6 +25,7 @@ else:
     import copy
     import dataclasses
     from functools import reduce
+    import time
     import typing
     import logging
     # blender
@@ -235,10 +236,18 @@ class Cache:
         self.d = {}
 
     def update(self, obj: bpy.types.Object) -> None:
-        log.debug("Updating meshstats data for {0}".format(obj.name))
+        assert obj.type == 'MESH'
+        start = time.time_ns()
         m = Mesh()
         m.update(obj)
         self.d[hash(obj)] = m
+        time_taken = int((time.time_ns() - start) / 1000)
+        log.debug(
+            "Updated meshstats data for {0} in {1}ms.".format(
+                obj.name,
+                time_taken
+            )
+        )
 
     def get(self, obj: bpy.types.Object) -> typing.Optional[Mesh]:
         return self.d.get(hash(obj))
