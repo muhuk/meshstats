@@ -134,11 +134,10 @@ class Mesh:
     def _calculate_faces(self,
                          bm: bmesh.types.BMesh,
                          transform: mathutils.Matrix) -> None:
-        inverse_transform = transform.inverted()
         for face_ in bm.faces:
             if len(face_.loops) == 3:
                 vertices = [copy.deepcopy(l.vert.co) for l in face_.loops]
-                center = (vertices[0] + vertices[1] + vertices[2]) / 3
+                center = face_.calc_center_median()
                 self.tris.append(
                     face.FaceTri(
                         center=center,
@@ -149,15 +148,7 @@ class Mesh:
                 del vertices, center
             elif len(face_.loops) > 4:
                 vertices = [copy.deepcopy(l.vert.co) for l in face_.loops]
-                # vertices are in world coords so we need to transform center
-                # to object coords first to be able to call
-                # closest_point_on_mesh then convert back to world coords.
-                center = reduce(lambda a, b: a + b, vertices) / len(vertices)
-                center = inverse_transform @ center
-                center = mathutils.Vector(
-                    self.obj.closest_point_on_mesh(center)[1]
-                )
-                center = transform @ center
+                center = face_.calc_center_median()
                 self.ngons.append(
                     face.FaceNgon(
                         center=center,
