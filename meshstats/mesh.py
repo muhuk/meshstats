@@ -37,6 +37,9 @@ else:
     from meshstats import (face, pole)
 
 
+MESHDATA_TTL = 200  # milliseconds
+
+
 log = logging.getLogger(__name__)
 
 
@@ -75,11 +78,14 @@ class Mesh:
 
     total_poles_count: int = dataclasses.field(init=False, default=0)
 
+    # last_updated is in milliseconds.
+    last_updated: int = dataclasses.field(init=False, default=-1)
+
     def __post_init__(self):
         self._reset()
 
     @property
-    def face_budget_utilization(self):
+    def face_budget_utilization(self) -> typing.Optional[float]:
         if self.obj.meshstats.face_budget_on:
             props = self.obj.meshstats
             if props.face_budget_type == 'TRIS':
@@ -97,11 +103,13 @@ class Mesh:
         else:
             return None
 
-    def update(self, obj: bpy.types.Object):
+    def update(self, obj: bpy.types.Object) -> None:
         bm = bmesh.new()
         bm.from_mesh(obj.data)
         m = mathutils.Matrix(obj.matrix_world)
         bm.transform(m)
+
+        self._reset()
 
         self._calculate_faces(bm, m)
         self._calculate_poles(bm)
@@ -111,7 +119,9 @@ class Mesh:
 
         bm.free()
 
-    def _calculate_counts(self, bm: bmesh.types.BMesh):
+        self.last_updated = int(time.time_ns() / 1000000)
+
+    def _calculate_counts(self, bm: bmesh.types.BMesh) -> None:
         self.face_count = len(bm.faces)
         self.tris_count = len(self.tris)
         self.ngons_count = len(self.ngons)
@@ -123,7 +133,7 @@ class Mesh:
 
     def _calculate_faces(self,
                          bm: bmesh.types.BMesh,
-                         transform: mathutils.Matrix):
+                         transform: mathutils.Matrix) -> None:
         inverse_transform = transform.inverted()
         for face_ in bm.faces:
             if len(face_.loops) == 3:
@@ -157,7 +167,7 @@ class Mesh:
                 )
                 del vertices, center
 
-    def _calculate_percentages(self):
+    def _calculate_percentages(self) -> None:
         self.tris_percentage = int(self.tris_count * 100.0 / self.face_count)
         self.quads_percentage = int(self.quads_count * 100.0 / self.face_count)
         self.ngons_percentage = int(self.ngons_count * 100.0 / self.face_count)
@@ -194,7 +204,7 @@ class Mesh:
             else:
                 self.quads_percentage += 1
 
-    def _calculate_poles(self, bm: bmesh.types.BMesh):
+    def _calculate_poles(self, bm: bmesh.types.BMesh) -> None:
         for vertex in bm.verts:
             edge_count = len(
                 [edge for edge in vertex.link_edges if not edge.is_boundary]
@@ -219,9 +229,12 @@ class Mesh:
                         spokes=list(spokes)
                     ))
 
-    def _reset(self):
+    def _reset(self) -> None:
         self.tris = []
         self.ngons = []
+        self.n_poles = []
+        self.e_poles = []
+        self.star_poles = []
         self.face_count = 0
         self.tris_count = 0
         self.quads_count = 0
@@ -237,17 +250,25 @@ class Cache:
 
     def update(self, obj: bpy.types.Object) -> None:
         assert obj.type == 'MESH'
+        cache_key = hash(obj)
         start = time.time_ns()
-        m = Mesh()
-        m.update(obj)
-        self.d[hash(obj)] = m
-        time_taken = int((time.time_ns() - start) / 1000)
-        log.debug(
-            "Updated meshstats data for {0} in {1}ms.".format(
-                obj.name,
-                time_taken
+        cached = self.d.get(cache_key)
+        if cached is not None and \
+           cached.last_updated + MESHDATA_TTL > int(start / 1000000):
+            log.debug("Skipping update for {}.".format(obj.name))
+        else:
+            if cached is None:
+                cached = Mesh()
+                self.d[cache_key] = cached
+            cached.update(obj)
+            # self.d[cache_key] = cached
+            time_taken = int((time.time_ns() - start) / 1000000)
+            log.debug(
+                "Updated meshstats data for {0} in {1}ms.".format(
+                    obj.name,
+                    time_taken
+                )
             )
-        )
 
     def get(self, obj: bpy.types.Object) -> typing.Optional[Mesh]:
         return self.d.get(hash(obj))
