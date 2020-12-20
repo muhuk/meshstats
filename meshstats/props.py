@@ -30,7 +30,7 @@ class MeshstatsAddonPreferences(bpy.types.AddonPreferences):
     object_face_limit: bpy.props.IntProperty(
         name="object_face_limit",
         description="Maximum face limit for meshstats calculations.",
-        default=constants.DEFAULT_OBJECT_FACE_LIMIT,
+        default=constants.OBJECT_FACE_LIMIT_DEFAULT,
         min=constants.OBJECT_FACE_LIMIT_MIN,
         soft_max=constants.OBJECT_FACE_LIMIT_SOFT_MAX,
         max=constants.OBJECT_FACE_LIMIT_MAX,
@@ -40,7 +40,7 @@ class MeshstatsAddonPreferences(bpy.types.AddonPreferences):
     overlay_tris_color: bpy.props.FloatVectorProperty(
         name="overlay_tris_color",
         description="Color to be used to draw overlay of tris in 3D view.",
-        default=constants.DEFAULT_TRIS_OUTLINE_COLOR,
+        default=constants.OVERLAY_TRIS_COLOR_DEFAULT,
         subtype='COLOR',
         size=4,
         min=0.0,
@@ -49,7 +49,7 @@ class MeshstatsAddonPreferences(bpy.types.AddonPreferences):
     overlay_ngons_color: bpy.props.FloatVectorProperty(
         name="overlay_ngons_color",
         description="Color to be used to draw overlay of ngons in 3D view.",
-        default=constants.DEFAULT_NGONS_OUTLINE_COLOR,
+        default=constants.OVERLAY_NGONS_COLOR_DEFAULT,
         subtype='COLOR',
         size=4,
         min=0.0,
@@ -58,7 +58,7 @@ class MeshstatsAddonPreferences(bpy.types.AddonPreferences):
     overlay_n_poles_color: bpy.props.FloatVectorProperty(
         name="overlay_n_poles_color",
         description="Color to be used to draw overlay of N-poles in 3D view.",
-        default=constants.DEFAULT_N_POLES_COLOR,
+        default=constants.OVERLAY_N_POLES_COLOR_DEFAULT,
         subtype='COLOR',
         size=4,
         min=0.0,
@@ -68,7 +68,7 @@ class MeshstatsAddonPreferences(bpy.types.AddonPreferences):
     overlay_e_poles_color: bpy.props.FloatVectorProperty(
         name="overlay_e_poles_color",
         description="Color to be used to draw overlay of E-poles in 3D view.",
-        default=constants.DEFAULT_E_POLES_COLOR,
+        default=constants.OVERLAY_E_POLES_COLOR_DEFAULT,
         subtype='COLOR',
         size=4,
         min=0.0,
@@ -78,7 +78,7 @@ class MeshstatsAddonPreferences(bpy.types.AddonPreferences):
     overlay_star_poles_color: bpy.props.FloatVectorProperty(
         name="overlay_star_poles_color",
         description="Color to be used to draw overlay of *-poles in 3D view.",
-        default=constants.DEFAULT_STAR_POLES_COLOR,
+        default=constants.OVERLAY_STAR_POLES_COLOR_DEFAULT,
         subtype='COLOR',
         size=4,
         min=0.0,
@@ -90,8 +90,8 @@ class MeshstatsAddonPreferences(bpy.types.AddonPreferences):
         col = layout.column(align=True, heading="Overlay Preferences")
         col.prop(self, "overlay_tris_color")
         col.prop(self, "overlay_ngons_color")
-        col.prop(self, "overlay_e_poles_color")
         col.prop(self, "overlay_n_poles_color")
+        col.prop(self, "overlay_e_poles_color")
         col.prop(self, "overlay_star_poles_color")
         layout.separator()
         col = layout.column(align=True, heading="Performance Preferences")
@@ -142,13 +142,15 @@ class MeshstatsResetSettings(bpy.types.Operator):
     def execute(self, context):
         addon_prefs = \
             context.preferences.addons[constants.ADDON_NAME].preferences
-        addon_prefs.object_face_limit = constants.DEFAULT_OBJECT_FACE_LIMIT
-        addon_prefs.overlay_tris_color = constants.DEFAULT_TRIS_OUTLINE_COLOR
-        addon_prefs.overlay_ngons_color = constants.DEFAULT_NGONS_OUTLINE_COLOR
-        addon_prefs.overlay_e_poles_color = constants.DEFAULT_E_POLES_COLOR
-        addon_prefs.overlay_n_poles_color = constants.DEFAULT_N_POLES_COLOR
+        addon_prefs.object_face_limit = constants.OBJECT_FACE_LIMIT_DEFAULT
+        addon_prefs.overlay_tris_color = constants.OVERLAY_TRIS_COLOR_DEFAULT
+        addon_prefs.overlay_ngons_color = constants.OVERLAY_NGONS_COLOR_DEFAULT
+        addon_prefs.overlay_n_poles_color = \
+            constants.OVERLAY_N_POLES_COLOR_DEFAULT
+        addon_prefs.overlay_e_poles_color = \
+            constants.OVERLAY_E_POLES_COLOR_DEFAULT
         addon_prefs.overlay_star_poles_color = \
-            constants.DEFAULT_STAR_POLES_COLOR
+            constants.OVERLAY_STAR_POLES_COLOR_DEFAULT
         return {'FINISHED'}
 
 
