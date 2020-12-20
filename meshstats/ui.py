@@ -79,23 +79,28 @@ class VIEW3D_PT_meshstats(MeshstatsPanel):
             "active",
             filter='AVAILABLE'
         )
-        if meshstats_context.get_object(context) is None:
+        obj = meshstats_context.get_object(context)
+        if obj is None:
             self.layout.label(
                 text="Mesh statistics is only available for meshes."
             )
         else:
-            mesh_cache = mesh.get_mesh_data()
-            if mesh_cache is not None:
-                self._draw_summary_table(self.layout, mesh_cache)
-                self.layout.separator()
-                self._draw_budget(self.layout, context, mesh_cache)
-                self.layout.separator()
-                self.layout.label(text="Overlay options")
-                self._draw_overlay_options(context, self.layout)
-            else:
-                self.layout.alert = True
-                self.layout.label(text="Calculating...")
-                self.layout.alert = False
+            eligibility: mesh.Eligibility = mesh.check_eligibility(obj)
+            if eligibility == mesh.Eligibility.OK:
+                mesh_cache = mesh.get_mesh_data()
+                if mesh_cache is not None:
+                    self._draw_summary_table(self.layout, mesh_cache)
+                    self.layout.separator()
+                    self._draw_budget(self.layout, context, mesh_cache)
+                    self.layout.separator()
+                    self.layout.label(text="Overlay options")
+                    self._draw_overlay_options(context, self.layout)
+                else:
+                    self.layout.alert = True
+                    self.layout.label(text="Calculating...")
+                    self.layout.alert = False
+            elif eligibility == mesh.Eligibility.TOO_MANY_FACES:
+                self.layout.label(text="Too many faces")
 
     @staticmethod
     def _draw_budget(layout, context, mesh_cache):

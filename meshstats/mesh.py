@@ -18,13 +18,13 @@
 
 if "bpy" in locals():
     import importlib
-    for mod in [meshstats_context, face, pole]:  # noqa: F821
+    for mod in [constants, meshstats_context, face, pole]:  # noqa: F821
         importlib.reload(mod)
 else:
     # stdlib
     import copy
     import dataclasses
-    from functools import reduce
+    import enum
     import time
     import typing
     import logging
@@ -33,6 +33,7 @@ else:
     import bpy
     import mathutils
     # addon
+    from meshstats import constants
     from meshstats import context as meshstats_context
     from meshstats import (face, pole)
 
@@ -41,6 +42,12 @@ MESHDATA_TTL = 200  # milliseconds
 
 
 log = logging.getLogger(__name__)
+
+
+class Eligibility(enum.Enum):
+    OK = 1
+    TOO_MANY_FACES = 2
+    DISABLED = 10
 
 
 @dataclasses.dataclass(eq=False)
@@ -239,6 +246,9 @@ class Cache:
     def __init__(self):
         self.d = {}
 
+    def get(self, obj: bpy.types.Object) -> typing.Optional[Mesh]:
+        return self.d.get(hash(obj))
+
     def update(self, obj: bpy.types.Object) -> None:
         assert obj.type == 'MESH'
         cache_key = hash(obj)
@@ -261,11 +271,18 @@ class Cache:
                 )
             )
 
-    def get(self, obj: bpy.types.Object) -> typing.Optional[Mesh]:
-        return self.d.get(hash(obj))
-
 
 cache = Cache()
+
+
+def check_eligibility(obj: bpy.types.Object) -> Eligibility:
+    assert obj.type == 'MESH'
+    addon_prefs = bpy.context.preferences.addons[constants.ADDON_NAME].preferences
+    if len(obj.data.polygons) > addon_prefs.object_face_limit:
+        log.debug("Object {} has too many faces, meshstats will not be calculated.".format(obj.name))
+        return Eligibility.TOO_MANY_FACES
+    else:
+        return Eligibility.OK
 
 
 def get_mesh_data() -> typing.Optional[Mesh]:
@@ -286,5 +303,5 @@ def app__load_pre_handler(*args_):
 def app__depsgraph_update_post(scene, depsgraph):
     global cache
     obj = meshstats_context.get_object()
-    if obj is not None:
+    if obj is not None and check_eligibility(obj) == Eligibility.OK:
         cache.update(obj)
