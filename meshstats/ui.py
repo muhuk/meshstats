@@ -87,7 +87,7 @@ class VIEW3D_PT_meshstats(MeshstatsPanel):
         else:
             eligibility: mesh.Eligibility = mesh.check_eligibility(obj)
             if eligibility == mesh.Eligibility.OK:
-                mesh_cache = mesh.get_mesh_data()
+                mesh_cache = mesh.get_mesh_data(obj)
                 if mesh_cache is not None:
                     self._draw_summary_table(self.layout, mesh_cache)
                     self.layout.separator()

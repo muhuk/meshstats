@@ -18,7 +18,7 @@
 
 if "bpy" in locals():
     import importlib
-    for mod in [constants, face, mesh, pole]:  # noqa: F821
+    for mod in [constants, face, mesh, meshstats_context, pole]:  # noqa: F821
         importlib.reload(mod)
 else:
     # stdlib
@@ -35,6 +35,7 @@ else:
     import gpu_extras.batch
     import mathutils
     # addon
+    from meshstats import context as meshstats_context
     from meshstats import (constants, face, mesh, pole)
 
 
@@ -49,7 +50,8 @@ def draw_callback():
     if smooth_shader is None:
         smooth_shader = gpu.shader.from_builtin('3D_SMOOTH_COLOR')
 
-    mesh_cache = mesh.get_mesh_data()
+    obj = meshstats_context.get_object()
+    mesh_cache = mesh.get_mesh_data(obj)
     if bpy.context.space_data.overlay.show_overlays is False \
        or mesh_cache is None:
         return

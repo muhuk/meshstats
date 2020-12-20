@@ -285,8 +285,7 @@ def check_eligibility(obj: bpy.types.Object) -> Eligibility:
         return Eligibility.OK
 
 
-def get_mesh_data() -> typing.Optional[Mesh]:
-    obj = meshstats_context.get_object()
+def get_mesh_data(obj: bpy.types.Object) -> typing.Optional[Mesh]:
     if obj is not None:
         return cache.get(obj)
     else:
