@@ -268,7 +268,7 @@ class Cache:
 cache = Cache()
 
 
-def get_cache() -> typing.Optional[Mesh]:
+def get_mesh_data() -> typing.Optional[Mesh]:
     obj = meshstats_context.get_object()
     if obj is not None:
         return cache.get(obj)

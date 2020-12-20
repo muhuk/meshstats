@@ -49,7 +49,7 @@ def draw_callback():
     if smooth_shader is None:
         smooth_shader = gpu.shader.from_builtin('3D_SMOOTH_COLOR')
 
-    mesh_cache = mesh.get_cache()
+    mesh_cache = mesh.get_mesh_data()
     if bpy.context.space_data.overlay.show_overlays is False \
        or mesh_cache is None:
         return

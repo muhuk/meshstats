@@ -84,7 +84,7 @@ class VIEW3D_PT_meshstats(MeshstatsPanel):
                 text="Mesh statistics is only available for meshes."
             )
         else:
-            mesh_cache = mesh.get_cache()
+            mesh_cache = mesh.get_mesh_data()
             if mesh_cache is not None:
                 self._draw_summary_table(self.layout, mesh_cache)
                 self.layout.separator()
