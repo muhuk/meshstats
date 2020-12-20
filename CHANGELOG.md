@@ -2,12 +2,23 @@
 
 ## [Unreleased]
 
+### Added
+
+- Added face count limit to prevent meshstats calculating stats on dense
+  meshes.  Default value is `10.000`, this should be okay for most people.  On
+  my machine calculating stats on an object with 10k faces takes approximately
+  50ms.  You can change this setting in addon preferences.
+
+### Changed
+
+- Statistics for multiple objects are not cached.
+
 ## [1.0] - 2020-11-23
 
 ### Changed
 - Due to [changes in Blender
   API](https://wiki.blender.org/wiki/Reference/Release_Notes/2.91/Python_API)
-  minimum version for this addon is not `2.91`.
+  minimum version for this addon is now `2.91`.
 
 ### Fixed
 - Fixed first draw call using the wrong shader.  See
