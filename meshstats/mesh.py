@@ -38,6 +38,7 @@ else:
     from meshstats import (face, pole)
 
 
+CACHE_SIZE_MAX = 10
 MESHDATA_TTL = 200  # milliseconds
 
 
@@ -250,12 +251,13 @@ class Cache:
         return self.d.get(hash(obj))
 
     def update(self, obj: bpy.types.Object) -> None:
+        self._evict_expired()
         assert obj.type == 'MESH'
         cache_key = hash(obj)
         start = time.time_ns()
         cached = self.d.get(cache_key)
         if cached is not None and \
-           cached.last_updated + MESHDATA_TTL > int(start / 1000000):
+           cached.last_updated + MESHDATA_TTL > int(start / 1_000_000):
             log.debug("Skipping update for '{}'.".format(obj.name))
         else:
             if cached is None:
@@ -270,6 +272,32 @@ class Cache:
                     time_taken
                 )
             )
+
+    def _evict_expired(self):
+        now = int(time.time_ns() / 1_000_000)
+        expired_set = set()
+        for (cache_key, m) in self.d.items():
+            if m.last_updated + MESHDATA_TTL < now:
+                log.debug("Evicting {} from cache".format(cache_key))
+                expired_set.add(cache_key)
+        for k in expired_set:
+            del(self.d[k])
+        del(expired_set)
+        if len(self.d) > CACHE_SIZE_MAX:
+            remove_set = list(
+                map(
+                    lambda kv: kv[0],
+                    sorted(
+                        self.d.items(),
+                        key=lambda kv: kv[1].last_updated,
+                        reverse=True
+                    )
+                )
+            )[CACHE_SIZE_MAX:]
+            for k in remove_set:
+                del(self.d[k])
+            del(remove_set)
+        log.debug("Cache size after eviction is {}".format(len(self.d)))
 
 
 cache = Cache()
