@@ -27,6 +27,16 @@ else:
 class MeshstatsAddonPreferences(bpy.types.AddonPreferences):
     bl_idname = constants.ADDON_NAME
 
+    object_face_limit: bpy.props.IntProperty(
+        name="object_face_limit",
+        description="Maximum face limit for meshstats calculations.",
+        default=constants.DEFAULT_OBJECT_FACE_LIMIT,
+        min=constants.OBJECT_FACE_LIMIT_MIN,
+        soft_max=constants.OBJECT_FACE_LIMIT_SOFT_MAX,
+        max=constants.OBJECT_FACE_LIMIT_MAX,
+        step=constants.OBJECT_FACE_LIMIT_STEP
+    )
+
     overlay_tris_color: bpy.props.FloatVectorProperty(
         name="overlay_tris_color",
         description="Color to be used to draw overlay of tris in 3D view.",
@@ -77,14 +87,16 @@ class MeshstatsAddonPreferences(bpy.types.AddonPreferences):
 
     def draw(self, context):
         layout = self.layout
-        layout.label(text="Overlay Preferences")
-        col = layout.column(align=True)
+        col = layout.column(align=True, heading="Overlay Preferences")
         col.prop(self, "overlay_tris_color")
         col.prop(self, "overlay_ngons_color")
-        col = layout.column(align=True)
         col.prop(self, "overlay_e_poles_color")
         col.prop(self, "overlay_n_poles_color")
         col.prop(self, "overlay_star_poles_color")
+        layout.separator()
+        col = layout.column(align=True, heading="Performance Preferences")
+        col.prop(self, "object_face_limit")
+        layout.separator()
         layout.operator(MeshstatsResetSettings.bl_idname)
 
 
@@ -130,6 +142,7 @@ class MeshstatsResetSettings(bpy.types.Operator):
     def execute(self, context):
         addon_prefs = \
             context.preferences.addons[constants.ADDON_NAME].preferences
+        addon_prefs.object_face_limit = constants.DEFAULT_OBJECT_FACE_LIMIT
         addon_prefs.overlay_tris_color = constants.DEFAULT_TRIS_OUTLINE_COLOR
         addon_prefs.overlay_ngons_color = constants.DEFAULT_NGONS_OUTLINE_COLOR
         addon_prefs.overlay_e_poles_color = constants.DEFAULT_E_POLES_COLOR
