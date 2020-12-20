@@ -256,7 +256,7 @@ class Cache:
         cached = self.d.get(cache_key)
         if cached is not None and \
            cached.last_updated + MESHDATA_TTL > int(start / 1000000):
-            log.debug("Skipping update for {}.".format(obj.name))
+            log.debug("Skipping update for '{}'.".format(obj.name))
         else:
             if cached is None:
                 cached = Mesh()
@@ -265,7 +265,7 @@ class Cache:
             # self.d[cache_key] = cached
             time_taken = int((time.time_ns() - start) / 1000000)
             log.debug(
-                "Updated meshstats data for {0} in {1}ms.".format(
+                "Updated meshstats data for '{0}' in {1}ms.".format(
                     obj.name,
                     time_taken
                 )
@@ -277,9 +277,10 @@ cache = Cache()
 
 def check_eligibility(obj: bpy.types.Object) -> Eligibility:
     assert obj.type == 'MESH'
-    addon_prefs = bpy.context.preferences.addons[constants.ADDON_NAME].preferences
+    addon_prefs = \
+        bpy.context.preferences.addons[constants.ADDON_NAME].preferences
     if len(obj.data.polygons) > addon_prefs.object_face_limit:
-        log.debug("Object {} has too many faces, meshstats will not be calculated.".format(obj.name))
+        log.debug("Object '{}' has too many faces.".format(obj.name))
         return Eligibility.TOO_MANY_FACES
     else:
         return Eligibility.OK
