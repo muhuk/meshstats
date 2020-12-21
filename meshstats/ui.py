@@ -120,7 +120,7 @@ class VIEW3D_PT_meshstats(MeshstatsPanel):
             row.prop(props, "face_budget", text="Budget")
             row.prop(props, "face_budget_type", text="")
             col.label(text="Utilization is {:.2%}.".format(
-                mesh_cache.face_budget_utilization
+                mesh_cache.face_budget_utilization(obj.meshstats)
             ))
 
     @staticmethod

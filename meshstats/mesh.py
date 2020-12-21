@@ -18,7 +18,7 @@
 
 if "bpy" in locals():
     import importlib
-    for mod in [constants, meshstats_context, face, pole]:  # noqa: F821
+    for mod in [constants, meshstats_context, face, pole, props]:  # noqa: F821
         importlib.reload(mod)
 else:
     # stdlib
@@ -35,7 +35,7 @@ else:
     # addon
     from meshstats import constants
     from meshstats import context as meshstats_context
-    from meshstats import (face, pole)
+    from meshstats import (face, pole, props)
 
 
 MESHDATA_TTL = 500  # milliseconds
@@ -91,20 +91,22 @@ class Mesh:
     def __post_init__(self):
         self._reset()
 
-    @property
-    def face_budget_utilization(self) -> typing.Optional[float]:
-        if self.obj.meshstats.face_budget_on:
-            props = self.obj.meshstats
-            if props.face_budget_type == 'TRIS':
-                return float(self.tesellated_tris_count) / props.face_budget
-            elif props.face_budget_type == 'QUADS_ONLY':
-                return float(self.quads_count) / props.face_budget
-            elif props.face_budget_type == 'FACES':
-                return float(self.face_count) / props.face_budget
+    def face_budget_utilization(
+            self,
+            obj_props: props.MeshstatsObjectProperties
+    ) -> typing.Optional[float]:
+        if obj_props.face_budget_on:
+            if obj_props.face_budget_type == 'TRIS':
+                return float(self.tesellated_tris_count) \
+                    / obj_props.face_budget
+            elif obj_props.face_budget_type == 'QUADS_ONLY':
+                return float(self.quads_count) / obj_props.face_budget
+            elif obj_props.face_budget_type == 'FACES':
+                return float(self.face_count) / obj_props.face_budget
             else:
                 raise RuntimeError(
                     "Unknown face_budget_type {}".format(
-                        props.face_budget_type
+                        obj_props.face_budget_type
                     )
                 )
         else:
