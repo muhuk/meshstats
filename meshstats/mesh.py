@@ -38,8 +38,7 @@ else:
     from meshstats import (face, pole)
 
 
-CACHE_SIZE_MAX = 10
-MESHDATA_TTL = 200  # milliseconds
+MESHDATA_TTL = 500  # milliseconds
 
 
 log = logging.getLogger(__name__)
@@ -244,6 +243,18 @@ class Mesh:
 
 
 class Cache:
+    # This is a somewhat imperfect caching mechanism.  There seems
+    # to be no way of detecting changes to a mesh datablock, so
+    # the TTL has to be kept short.
+    #
+    # OTOH this cache is not completely useless.  Within a short enough TTL
+    # period it is not possible to edit the mesh, and go back to object mode.
+    # Also this cache prevents successive calls to get the mesh data (from UI
+    # & overlay) to trigger unnecessary calculations.
+    #
+    # Cache does not have a limit on size as existing data will be quickly
+    # evicted anyway.  It is not possible to fill the cache with too many
+    # entries via normal usage.
     def __init__(self):
         self.d = {}
 
@@ -258,7 +269,7 @@ class Cache:
         cached = self.d.get(cache_key)
         if cached is not None and \
            cached.last_updated + MESHDATA_TTL > int(start / 1_000_000):
-            log.debug("Skipping update for '{}'.".format(obj.name))
+            log.debug("Using cached meshstats data for '{}'.".format(obj.name))
         else:
             if cached is None:
                 cached = Mesh()
@@ -266,7 +277,7 @@ class Cache:
             cached.update(obj)
             # self.d[cache_key] = cached
             time_taken = int((time.time_ns() - start) / 1000000)
-            log.debug(
+            log.info(
                 "Updated meshstats data for '{0}' in {1}ms.".format(
                     obj.name,
                     time_taken
@@ -283,20 +294,6 @@ class Cache:
         for k in expired_set:
             del(self.d[k])
         del(expired_set)
-        if len(self.d) > CACHE_SIZE_MAX:
-            remove_set = list(
-                map(
-                    lambda kv: kv[0],
-                    sorted(
-                        self.d.items(),
-                        key=lambda kv: kv[1].last_updated,
-                        reverse=True
-                    )
-                )
-            )[CACHE_SIZE_MAX:]
-            for k in remove_set:
-                del(self.d[k])
-            del(remove_set)
         log.debug("Cache size after eviction is {}".format(len(self.d)))
 
 
