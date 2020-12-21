@@ -261,17 +261,20 @@ class Cache:
         self.d = {}
 
     def get(self, obj: bpy.types.Object) -> typing.Optional[Mesh]:
-        return self.d.get(hash(obj))
+        assert obj.type == 'MESH'
+        return self.d.get(hash(obj.data))
 
     def update(self, obj: bpy.types.Object) -> None:
         self._evict_expired()
         assert obj.type == 'MESH'
-        cache_key = hash(obj)
+        cache_key = hash(obj.data)
         start = time.time_ns()
         cached = self.d.get(cache_key)
         if cached is not None and \
            cached.last_updated + MESHDATA_TTL > int(start / 1_000_000):
-            log.debug("Using cached meshstats data for '{}'.".format(obj.name))
+            log.debug(
+                "Using cached meshstats data for '{}'.".format(obj.data.name)
+            )
         else:
             if cached is None:
                 cached = Mesh()
@@ -281,7 +284,7 @@ class Cache:
             time_taken = int((time.time_ns() - start) / 1000000)
             log.info(
                 "Updated meshstats data for '{0}' in {1}ms.".format(
-                    obj.name,
+                    obj.data.name,
                     time_taken
                 )
             )
@@ -307,7 +310,7 @@ def check_eligibility(obj: bpy.types.Object) -> Eligibility:
     addon_prefs = \
         bpy.context.preferences.addons[constants.ADDON_NAME].preferences
     if len(obj.data.polygons) > addon_prefs.object_face_limit:
-        log.debug("Object '{}' has too many faces.".format(obj.name))
+        log.debug("Mesh '{}' has too many faces.".format(obj.data.name))
         return Eligibility.TOO_MANY_FACES
     else:
         return Eligibility.OK
