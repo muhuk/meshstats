@@ -2,16 +2,15 @@
 
 ## [Unreleased]
 
+## [1.1] - 2020-12-21
+
 ### Added
 
 - Added face count limit to prevent meshstats calculating stats on dense
   meshes.  Default value is `10.000`, this should be okay for most people.  On
   my machine calculating stats on an object with 10k faces takes approximately
   50ms.  You can change this setting in addon preferences.
-
-### Changed
-
-- Statistics for multiple objects are not cached.
+- Statistic calculations are cached for a short while.
 
 ## [1.0] - 2020-11-23
 
@@ -71,7 +70,8 @@
 - Allow enabling & disabling the overlay.  This setting is saved with the
   scene.
 
-[Unreleased]: https://github.com/muhuk/meshstats/compare/v1.0...HEAD
+[Unreleased]: https://github.com/muhuk/meshstats/compare/v1.1...HEAD
+[1.0]: https://github.com/muhuk/meshstats/compare/v1.0...v1.1
 [1.0]: https://github.com/muhuk/meshstats/compare/v0.3...v1.0
 [0.3]: https://github.com/muhuk/meshstats/compare/v0.2...v0.3
 [0.2]: https://github.com/muhuk/meshstats/compare/v0.1...v0.2
