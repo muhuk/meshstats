@@ -27,6 +27,12 @@ else:
 class MeshstatsAddonPreferences(bpy.types.AddonPreferences):
     bl_idname = constants.ADDON_NAME
 
+    disabled_by_default: bpy.props.BoolProperty(
+        name="disabled_by_default",
+        description="Meshstats calculations are disabled until "
+                    + "they are turned on manually.",
+        default=True
+    )
     object_face_limit: bpy.props.IntProperty(
         name="object_face_limit",
         description="Maximum face limit for meshstats calculations.",
@@ -87,15 +93,16 @@ class MeshstatsAddonPreferences(bpy.types.AddonPreferences):
 
     def draw(self, context):
         layout = self.layout
+        col = layout.column(align=True, heading="Performance Preferences")
+        col.prop(self, "disabled_by_default")
+        col.prop(self, "object_face_limit")
+        layout.separator()
         col = layout.column(align=True, heading="Overlay Preferences")
         col.prop(self, "overlay_tris_color")
         col.prop(self, "overlay_ngons_color")
         col.prop(self, "overlay_n_poles_color")
         col.prop(self, "overlay_e_poles_color")
         col.prop(self, "overlay_star_poles_color")
-        layout.separator()
-        col = layout.column(align=True, heading="Performance Preferences")
-        col.prop(self, "object_face_limit")
         layout.separator()
         layout.operator(MeshstatsResetSettings.bl_idname)
 
