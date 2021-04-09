@@ -108,6 +108,17 @@ class MeshstatsAddonPreferences(bpy.types.AddonPreferences):
 
 
 class MeshstatsObjectProperties(bpy.types.PropertyGroup):
+    status: bpy.props.EnumProperty(
+        name="status",
+        description="Enable meshstats.",
+        default='UNINITIALIZED',
+        items=[
+            ('UNINITIALIZED', "Uninitialized", "", 1),
+            ('ENABLED', "Enabled", "", 2),
+            ('DISABLED', "Disabled", "", 3),
+        ],
+        options=set(['HIDDEN']),
+    )
     face_budget_on: bpy.props.BoolProperty(
         name="face_budget_on",
         description="Toggle face budget"

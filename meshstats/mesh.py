@@ -318,9 +318,17 @@ cache = Cache()
 
 def check_eligibility(obj: bpy.types.Object) -> Eligibility:
     assert obj.type == 'MESH'
+    obj_props = obj.meshstats
     addon_prefs = \
         bpy.context.preferences.addons[constants.ADDON_NAME].preferences
-    if len(obj.data.polygons) > addon_prefs.object_face_limit:
+    if obj_props.status == 'UNINITIALIZED':
+        if addon_prefs.disabled_by_default:
+            obj_props.status = 'DISABLED'
+        else:
+            obj_props.status = 'ENABLED'
+    if obj_props.status == 'DISABLED':
+        return Eligibility.DISABLED
+    elif len(obj.data.polygons) > addon_prefs.object_face_limit:
         log.debug("Mesh '{}' has too many faces.".format(obj.data.name))
         return Eligibility.TOO_MANY_FACES
     else:

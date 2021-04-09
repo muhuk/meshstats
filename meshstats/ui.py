@@ -99,8 +99,12 @@ class VIEW3D_PT_meshstats(MeshstatsPanel):
                     self.layout.alert = True
                     self.layout.label(text="Calculating...")
                     self.layout.alert = False
+                self.layout.operator("meshstats.meshstats_disable_object")
             elif eligibility == mesh.Eligibility.TOO_MANY_FACES:
                 self.layout.label(text="Too many faces")
+            elif eligibility == mesh.Eligibility.DISABLED:
+                self.layout.label(text="Meshstats is disabled on this object.")
+                self.layout.operator("meshstats.meshstats_enable_object")
 
     @staticmethod
     def _draw_budget(layout, context, mesh_cache):

@@ -18,13 +18,14 @@
 
 if "bpy" in locals():
     import importlib
-    for mod in [icon, mesh, overlay, props, ui]:  # noqa: F821
+    for mod in [icon, mesh, ops, overlay, props, ui]:  # noqa: F821
         importlib.reload(mod)
 else:
     import bpy
     from meshstats import (
         icon,
         mesh,
+        ops,
         overlay,
         props,
         ui
@@ -64,6 +65,8 @@ def register():
     )
 
     # Register Operations
+    bpy.utils.register_class(ops.MeshstatsDisableObject)
+    bpy.utils.register_class(ops.MeshstatsEnableObject)
     bpy.utils.register_class(props.MeshstatsResetSettings)
 
     # Register UI
@@ -96,6 +99,8 @@ def unregister():
     bpy.utils.unregister_class(ui.VIEW3D_PT_meshstats)
 
     # Unregister Operations
+    bpy.utils.unregister_class(ops.MeshstatsDisableObject)
+    bpy.utils.unregister_class(ops.MeshstatsEnableObject)
     bpy.utils.unregister_class(props.MeshstatsResetSettings)
 
     # Unregister Props
