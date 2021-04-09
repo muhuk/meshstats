@@ -1,0 +1,8 @@
+[flake8]
+ignore =
+    # See https://github.com/PyCQA/pyflakes/issues/542
+    F722,
+    # Fuuuuuu
+    F821,
+    # You need to choose between W503 & W504
+    W503,

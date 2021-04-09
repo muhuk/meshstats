@@ -18,23 +18,25 @@
 
 import abc
 from dataclasses import dataclass
-from typing import List
+from typing import Iterable, List, Tuple
 
 import mathutils
 
 
 class Face(abc.ABC):
-    pass
+    center: mathutils.Vector
+    vertices: Iterable[mathutils.Vector]
+    normal: mathutils.Vector
 
 
 @dataclass(frozen=True)
 class FaceTri(Face):
     center: mathutils.Vector
-    vertices: (
+    vertices: Tuple[
         mathutils.Vector,
         mathutils.Vector,
         mathutils.Vector
-    )
+    ]
     normal: mathutils.Vector
 
 

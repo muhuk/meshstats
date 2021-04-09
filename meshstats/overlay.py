@@ -116,7 +116,7 @@ def draw_callback():
 def _draw_overlay_faces(
         context: bpy.types.Context,
         shader: gpu.types.GPUShader,
-        color: (float, float, float, float),
+        color: typing.Tuple[float, float, float, float],
         faces: typing.List[face.Face]
 ):
     faded_alpha = min(color[3] * 0.15 + 0.1, color[3])
@@ -140,7 +140,7 @@ def _draw_overlay_poles(
         context: bpy.types.Context,
         uniform_shader: gpu.types.GPUShader,
         smooth_shader: gpu.types.GPUShader,
-        color: (float, float, float, float),
+        color: typing.Tuple[float, float, float, float],
         poles: typing.List[pole.Pole]
 ):
     faded_alpha = min(color[3] * 0.15 + 0.1, color[3])

@@ -145,18 +145,21 @@ class Mesh:
                          transform: mathutils.Matrix) -> None:
         for face_ in bm.faces:
             if len(face_.loops) == 3:
-                vertices = [copy.deepcopy(l.vert.co) for l in face_.loops]
+                vertices = [copy.deepcopy(x.vert.co) for x in face_.loops]
                 center = face_.calc_center_median()
                 self.tris.append(
                     face.FaceTri(
                         center=center,
-                        vertices=tuple(vertices),
+                        vertices=typing.cast(typing.Tuple[mathutils.Vector,
+                                                          mathutils.Vector,
+                                                          mathutils.Vector],
+                                             tuple(vertices)),
                         normal=copy.deepcopy(face_.normal)
                     )
                 )
                 del vertices, center
             elif len(face_.loops) > 4:
-                vertices = [copy.deepcopy(l.vert.co) for l in face_.loops]
+                vertices = [copy.deepcopy(x.vert.co) for x in face_.loops]
                 center = face_.calc_center_median()
                 self.ngons.append(
                     face.FaceNgon(
@@ -181,22 +184,22 @@ class Mesh:
             self.ngons_percentage = max(1, self.ngons_percentage)
 
         # Adjust if the sum is not 100
-        while (self.tris_percentage +
-               self.quads_percentage +
-               self.ngons_percentage) > 100:
+        while (self.tris_percentage
+               + self.quads_percentage
+               + self.ngons_percentage) > 100:
             if self.quads_percentage > self.tris_percentage \
-                   and self.quads_percentage > self.ngons_percentage:
+               and self.quads_percentage > self.ngons_percentage:
                 self.quads_percentage -= 1
             elif self.tris_percentage > self.ngons_percentage:
                 self.tris_percentage -= 1
             else:
                 self.ngons_percentage -= 1
-        while (self.tris_percentage +
-               self.quads_percentage +
-               self.ngons_percentage) < 100:
+        while (self.tris_percentage
+               + self.quads_percentage
+               + self.ngons_percentage) < 100:
             if self.ngons_percentage < self.quads_percentage \
-                   and self.ngons_percentage < self.tris_percentage \
-                   and self.ngons_percentage > 0:
+               and self.ngons_percentage < self.tris_percentage \
+               and self.ngons_percentage > 0:
                 self.ngons_percentage += 1
             elif self.tris_percentage < self.quads_percentage \
                     and self.tris_percentage > 0:
@@ -216,12 +219,20 @@ class Mesh:
                 if edge_count == 3:
                     self.n_poles.append(pole.NPole(
                         center=copy.deepcopy(vertex.co),
-                        spokes=tuple(spokes)
+                        spokes=typing.cast(typing.Tuple[mathutils.Vector,
+                                                        mathutils.Vector,
+                                                        mathutils.Vector],
+                                           tuple(spokes))
                     ))
                 elif edge_count == 5:
                     self.e_poles.append(pole.EPole(
                         center=copy.deepcopy(vertex.co),
-                        spokes=tuple(spokes)
+                        spokes=typing.cast(typing.Tuple[mathutils.Vector,
+                                                        mathutils.Vector,
+                                                        mathutils.Vector,
+                                                        mathutils.Vector,
+                                                        mathutils.Vector],
+                                           tuple(spokes))
                     ))
                 elif edge_count > 5:
                     self.star_poles.append(pole.StarPole(

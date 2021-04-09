@@ -18,35 +18,36 @@
 
 import abc
 from dataclasses import dataclass
-from typing import List
+from typing import Collection, List, Tuple
 
 import mathutils
 
 
 class Pole(abc.ABC):
-    pass
+    center: mathutils.Vector
+    spokes: Collection[mathutils.Vector]
 
 
 @dataclass(frozen=True)
 class EPole(Pole):
     center: mathutils.Vector
-    spokes: (
+    spokes: Tuple[
         mathutils.Vector,
         mathutils.Vector,
         mathutils.Vector,
         mathutils.Vector,
         mathutils.Vector
-    )
+    ]
 
 
 @dataclass(frozen=True)
 class NPole(Pole):
     center: mathutils.Vector
-    spokes: (
+    spokes: Tuple[
         mathutils.Vector,
         mathutils.Vector,
         mathutils.Vector
-    )
+    ]
 
 
 @dataclass(frozen=True)
