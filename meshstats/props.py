@@ -107,6 +107,21 @@ class MeshstatsAddonPreferences(bpy.types.AddonPreferences):
         layout.operator(MeshstatsResetSettings.bl_idname)
 
 
+def _get_status(self):
+    addon_prefs = \
+        bpy.context.preferences.addons[constants.ADDON_NAME].preferences
+    if "status" not in self or self["status"] == 1:  # UNINITIALIZED
+        if addon_prefs.disabled_by_default:
+            self["status"] = 3  # DISABLED
+        else:
+            self["status"] = 2  # ENABLED
+    return self["status"]
+
+
+def _set_status(self, new_value):
+    self["status"] = new_value
+
+
 class MeshstatsObjectProperties(bpy.types.PropertyGroup):
     status: bpy.props.EnumProperty(
         name="status",
@@ -118,6 +133,8 @@ class MeshstatsObjectProperties(bpy.types.PropertyGroup):
             ('DISABLED', "Disabled", "", 3),
         ],
         options=set(['HIDDEN']),
+        get=_get_status,
+        set=_set_status,
     )
     face_budget_on: bpy.props.BoolProperty(
         name="face_budget_on",
