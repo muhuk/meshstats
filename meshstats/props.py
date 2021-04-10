@@ -169,27 +169,6 @@ class MeshstatsObjectProperties(bpy.types.PropertyGroup):
     )
 
 
-class MeshstatsResetSettings(bpy.types.Operator):
-    """Reset Meshstats settings"""
-    bl_idname = "preferences.meshstats_reset_settings"
-    bl_label = "Reset Meshstats settings"
-
-    def execute(self, context):
-        addon_prefs = \
-            context.preferences.addons[constants.ADDON_NAME].preferences
-        addon_prefs.disabled_by_default = constants.DISABLED_BY_DEFAULT_DEFAULT
-        addon_prefs.object_face_limit = constants.OBJECT_FACE_LIMIT_DEFAULT
-        addon_prefs.overlay_tris_color = constants.OVERLAY_TRIS_COLOR_DEFAULT
-        addon_prefs.overlay_ngons_color = constants.OVERLAY_NGONS_COLOR_DEFAULT
-        addon_prefs.overlay_n_poles_color = \
-            constants.OVERLAY_N_POLES_COLOR_DEFAULT
-        addon_prefs.overlay_e_poles_color = \
-            constants.OVERLAY_E_POLES_COLOR_DEFAULT
-        addon_prefs.overlay_star_poles_color = \
-            constants.OVERLAY_STAR_POLES_COLOR_DEFAULT
-        return {'FINISHED'}
-
-
 class MeshstatsSceneProperties(bpy.types.PropertyGroup):
     overlay_tris: bpy.props.BoolProperty(
         name="overlay_tris",
