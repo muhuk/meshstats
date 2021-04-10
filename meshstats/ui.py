@@ -74,17 +74,13 @@ class VIEW3D_PT_meshstats(MeshstatsPanel):
     bl_label = "Meshstats"
 
     def draw(self, context):
-        self.layout.template_ID(
-            context.view_layer.objects,
-            "active",
-            filter='AVAILABLE'
-        )
         obj = meshstats_context.get_object(context)
         if obj is None:
             self.layout.label(
                 text="Mesh statistics is only available for meshes."
             )
         else:
+            self.layout.label(text="Active object: {}".format(obj.name))
             eligibility: mesh.Eligibility = mesh.check_eligibility(obj)
             if eligibility == mesh.Eligibility.OK:
                 mesh_cache = mesh.get_mesh_data(obj)
