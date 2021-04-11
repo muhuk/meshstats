@@ -38,7 +38,7 @@ else:
     from meshstats import (face, pole, props)
 
 
-MESHDATA_TTL = 500  # milliseconds
+MESHDATA_TTL = 60_000  # milliseconds
 
 
 log = logging.getLogger(__name__)
@@ -256,49 +256,36 @@ class Mesh:
 
 
 class Cache:
-    # This is a somewhat imperfect caching mechanism.  There seems
-    # to be no way of detecting changes to a mesh datablock, so
-    # the TTL has to be kept short.
-    #
-    # OTOH this cache is not completely useless.  Within a short enough TTL
-    # period it is not possible to edit the mesh, and go back to object mode.
-    # Also this cache prevents successive calls to get the mesh data (from UI
-    # & overlay) to trigger unnecessary calculations.
-    #
-    # Cache does not have a limit on size as existing data will be quickly
-    # evicted anyway.  It is not possible to fill the cache with too many
-    # entries via normal usage.
     def __init__(self):
         self.d = {}
 
     def get(self, obj: bpy.types.Object) -> typing.Optional[Mesh]:
         assert obj.type == 'MESH'
-        return self.d.get(hash(obj.data))
+        cache_key = hash(obj.data)
+        now = time.time_ns()
+        cached = self.d.get(cache_key)
+        if cached is None or \
+           cached.last_updated + MESHDATA_TTL < int(now / 1_000_000):
+            self.update(obj)
+        return self.d.get(cache_key)
 
     def update(self, obj: bpy.types.Object) -> None:
         self._evict_expired()
+        start = time.time_ns()
         assert obj.type == 'MESH'
         cache_key = hash(obj.data)
-        start = time.time_ns()
         cached = self.d.get(cache_key)
-        if cached is not None and \
-           cached.last_updated + MESHDATA_TTL > int(start / 1_000_000):
-            log.debug(
-                "Using cached meshstats data for '{}'.".format(obj.data.name)
+        if cached is None:
+            cached = Mesh()
+            self.d[cache_key] = cached
+        cached.update(obj)
+        time_taken = int((time.time_ns() - start) / 1_000_000)
+        log.info(
+            "Updated meshstats data for '{0}' in {1}ms.".format(
+                obj.data.name,
+                time_taken
             )
-        else:
-            if cached is None:
-                cached = Mesh()
-                self.d[cache_key] = cached
-            cached.update(obj)
-            # self.d[cache_key] = cached
-            time_taken = int((time.time_ns() - start) / 1000000)
-            log.info(
-                "Updated meshstats data for '{0}' in {1}ms.".format(
-                    obj.data.name,
-                    time_taken
-                )
-            )
+        )
 
     def _evict_expired(self):
         now = int(time.time_ns() / 1_000_000)
@@ -347,5 +334,9 @@ def app__load_pre_handler(*args_):
 def app__depsgraph_update_post(scene, depsgraph):
     global cache
     obj = meshstats_context.get_object()
-    if obj is not None and check_eligibility(obj) == Eligibility.OK:
-        cache.update(obj)
+    if obj is not None:
+        for u in depsgraph.updates:
+            if u.id.original == obj \
+               and u.is_updated_geometry \
+               and check_eligibility(obj) == Eligibility.OK:
+                cache.update(obj)

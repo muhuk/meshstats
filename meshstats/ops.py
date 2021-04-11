@@ -18,10 +18,12 @@
 
 if "bpy" in locals():
     import importlib
-    importlib.reload(meshstats_context)  # noqa: F821
+    for mod in [mesh, meshstats_context]:  # noqa: F821
+        importlib.reload(mod)
 else:
     import bpy
     from meshstats import context as meshstats_context
+    from meshstats import mesh
 
 
 class MeshstatsDisableObject(bpy.types.Operator):
@@ -47,6 +49,8 @@ class MeshstatsEnableObject(bpy.types.Operator):
         obj = meshstats_context.get_object(context)
         if obj is not None:
             obj.meshstats.status = 'ENABLED'
+            if mesh.check_eligibility(obj) == mesh.Eligibility.OK:
+                mesh.cache.update(obj)
             return {'FINISHED'}
         else:
             return {'CANCELLED'}

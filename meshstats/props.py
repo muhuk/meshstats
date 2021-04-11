@@ -18,10 +18,12 @@
 
 if "bpy" in locals():
     import importlib
-    importlib.reload(constants)  # noqa: F821
+    for mod in [constants, ops]:  # noqa: F821
+        importlib.reload(mod)
 else:
     import bpy
     from meshstats import constants
+    from meshstats import ops
 
 
 class MeshstatsAddonPreferences(bpy.types.AddonPreferences):
@@ -104,7 +106,7 @@ class MeshstatsAddonPreferences(bpy.types.AddonPreferences):
         col.prop(self, "overlay_e_poles_color")
         col.prop(self, "overlay_star_poles_color")
         layout.separator()
-        layout.operator(MeshstatsResetSettings.bl_idname)
+        layout.operator(ops.MeshstatsResetSettings.bl_idname)
 
 
 def _get_status(self):
