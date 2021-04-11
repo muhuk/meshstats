@@ -115,12 +115,10 @@ class Mesh:
     def update(self, obj: bpy.types.Object) -> None:
         bm = bmesh.new()
         bm.from_mesh(obj.data)
-        m = mathutils.Matrix(obj.matrix_world)
-        bm.transform(m)
 
         self._reset()
 
-        self._calculate_faces(bm, m)
+        self._calculate_faces(bm)
         self._calculate_poles(bm)
 
         self._calculate_counts(bm)
@@ -141,8 +139,7 @@ class Mesh:
             + len(self.star_poles)
 
     def _calculate_faces(self,
-                         bm: bmesh.types.BMesh,
-                         transform: mathutils.Matrix) -> None:
+                         bm: bmesh.types.BMesh) -> None:
         for face_ in bm.faces:
             if len(face_.loops) == 3:
                 vertices = [copy.deepcopy(x.vert.co) for x in face_.loops]

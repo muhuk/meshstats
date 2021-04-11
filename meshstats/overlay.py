@@ -53,6 +53,7 @@ def draw_callback():
     obj = meshstats_context.get_object()
     if obj is None:
         return
+    transform_matrix = mathutils.Matrix(obj.matrix_world)
     context = bpy.context
     if context.space_data.overlay.show_overlays is False:
         return
@@ -76,14 +77,16 @@ def draw_callback():
             context,
             uniform_shader,
             color_tris,
-            mesh_data.tris
+            mesh_data.tris,
+            transform_matrix,
         )
     if props.overlay_ngons:
         _draw_overlay_faces(
             context,
             uniform_shader,
             color_ngons,
-            mesh_data.ngons
+            mesh_data.ngons,
+            transform_matrix,
         )
     if props.overlay_n_poles:
         _draw_overlay_poles(
@@ -91,7 +94,8 @@ def draw_callback():
             uniform_shader,
             smooth_shader,
             color_n_poles,
-            mesh_data.n_poles
+            mesh_data.n_poles,
+            transform_matrix,
         )
     if props.overlay_e_poles:
         _draw_overlay_poles(
@@ -99,7 +103,8 @@ def draw_callback():
             uniform_shader,
             smooth_shader,
             color_e_poles,
-            mesh_data.e_poles
+            mesh_data.e_poles,
+            transform_matrix,
         )
     if props.overlay_star_poles:
         _draw_overlay_poles(
@@ -107,7 +112,8 @@ def draw_callback():
             uniform_shader,
             smooth_shader,
             color_star_poles,
-            mesh_data.star_poles
+            mesh_data.star_poles,
+            transform_matrix,
         )
 
     # Reset defaults
@@ -120,21 +126,26 @@ def _draw_overlay_faces(
         context: bpy.types.Context,
         shader: gpu.types.GPUShader,
         color: typing.Tuple[float, float, float, float],
-        faces: typing.List[face.Face]
+        faces: typing.List[face.Face],
+        transform_matrix: mathutils.Matrix
 ):
-    faded_alpha = min(color[3] * 0.15 + 0.1, color[3])
+    faded_alpha = 0.05  # min(color[3] * 0.15 + 0.1, color[3])
     faded_color = (color[0], color[1], color[2], faded_alpha)
 
     shader.bind()
     for face_ in faces:
-        if _is_visible(context, face_.center, face_.normal):
+        if _is_visible(
+            context,
+            transform_matrix @ face_.center,
+            transform_matrix @ face_.normal
+        ):
             shader.uniform_float("color", color)
         else:
             shader.uniform_float("color", faded_color)
         batch = gpu_extras.batch.batch_for_shader(
             shader,
             'LINE_LOOP',
-            {"pos": face_.vertices}
+            {"pos": [transform_matrix @ v for v in face_.vertices]}
         )
         batch.draw(shader)
 
@@ -144,7 +155,8 @@ def _draw_overlay_poles(
         uniform_shader: gpu.types.GPUShader,
         smooth_shader: gpu.types.GPUShader,
         color: typing.Tuple[float, float, float, float],
-        poles: typing.List[pole.Pole]
+        poles: typing.List[pole.Pole],
+        transform_matrix: mathutils.Matrix
 ):
     faded_alpha = min(color[3] * 0.15 + 0.1, color[3])
     faded_color = (color[0], color[1], color[2], faded_alpha)
@@ -153,10 +165,15 @@ def _draw_overlay_poles(
     use_color = None
 
     for pole_ in poles:
-        if _is_visible(context, pole_.center):
+        if _is_visible(context, transform_matrix @ pole_.center):
             use_color = color
         else:
             use_color = faded_color
+
+        # Apply world transform
+        pole_center: mathutils.Vector = transform_matrix @ pole_.center
+        midpoints = [(pole_.center + v) / 2 for v in pole_.spokes]
+        midpoints = [transform_matrix @ v for v in midpoints]
 
         # Draw the center
         uniform_shader.bind()
@@ -164,18 +181,17 @@ def _draw_overlay_poles(
         batch = gpu_extras.batch.batch_for_shader(
             uniform_shader,
             'POINTS',
-            {"pos": [pole_.center]}
+            {"pos": [pole_center]}
         )
         batch.draw(uniform_shader)
 
         # Draw spokes
         smooth_shader.bind()
-        midpoints = [(pole_.center + v) / 2 for v in pole_.spokes]
         batch = gpu_extras.batch.batch_for_shader(
             smooth_shader,
             'LINES',
             {
-                "pos": list(chain(*zip(repeat(pole_.center), midpoints))),
+                "pos": list(chain(*zip(repeat(pole_center), midpoints))),
                 "color": list(
                     chain(*repeat(
                         [use_color, zeroed_color],
@@ -204,8 +220,6 @@ def _is_visible(
         projected_vertex
     )
     ray = (point - ray_origin).normalized()
-    if normal and degrees(ray.angle(normal)) < 90:
-        return False
     (result, loc, _, _, obj, _) = context.scene.ray_cast(
         context.view_layer.depsgraph,
         ray_origin,
