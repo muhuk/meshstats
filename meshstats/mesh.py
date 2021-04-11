@@ -317,13 +317,6 @@ def check_eligibility(obj: bpy.types.Object) -> Eligibility:
         return Eligibility.OK
 
 
-def get_mesh_data(obj: bpy.types.Object) -> typing.Optional[Mesh]:
-    if obj is not None:
-        return cache.get(obj)
-    else:
-        return None
-
-
 @bpy.app.handlers.persistent
 def app__load_pre_handler(*args_):
     global cache

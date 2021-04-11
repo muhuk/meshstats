@@ -51,11 +51,14 @@ def draw_callback():
         smooth_shader = gpu.shader.from_builtin('3D_SMOOTH_COLOR')
 
     obj = meshstats_context.get_object()
-    mesh_cache = mesh.get_mesh_data(obj)
-    if bpy.context.space_data.overlay.show_overlays is False \
-       or mesh_cache is None:
+    if obj is None:
         return
     context = bpy.context
+    if context.space_data.overlay.show_overlays is False:
+        return
+    mesh_data = mesh.cache.get(obj)
+    if mesh_data is None:
+        return
     addon_prefs = context.preferences.addons[constants.ADDON_NAME].preferences
     color_tris = addon_prefs.overlay_tris_color
     color_ngons = addon_prefs.overlay_ngons_color
@@ -73,14 +76,14 @@ def draw_callback():
             context,
             uniform_shader,
             color_tris,
-            mesh_cache.tris
+            mesh_data.tris
         )
     if props.overlay_ngons:
         _draw_overlay_faces(
             context,
             uniform_shader,
             color_ngons,
-            mesh_cache.ngons
+            mesh_data.ngons
         )
     if props.overlay_n_poles:
         _draw_overlay_poles(
@@ -88,7 +91,7 @@ def draw_callback():
             uniform_shader,
             smooth_shader,
             color_n_poles,
-            mesh_cache.n_poles
+            mesh_data.n_poles
         )
     if props.overlay_e_poles:
         _draw_overlay_poles(
@@ -96,7 +99,7 @@ def draw_callback():
             uniform_shader,
             smooth_shader,
             color_e_poles,
-            mesh_cache.e_poles
+            mesh_data.e_poles
         )
     if props.overlay_star_poles:
         _draw_overlay_poles(
@@ -104,7 +107,7 @@ def draw_callback():
             uniform_shader,
             smooth_shader,
             color_star_poles,
-            mesh_cache.star_poles
+            mesh_data.star_poles
         )
 
     # Reset defaults

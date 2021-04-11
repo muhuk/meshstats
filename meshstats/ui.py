@@ -83,11 +83,11 @@ class VIEW3D_PT_meshstats(MeshstatsPanel):
             self.layout.label(text="Active object: {}".format(obj.name))
             eligibility: mesh.Eligibility = mesh.check_eligibility(obj)
             if eligibility == mesh.Eligibility.OK:
-                mesh_cache = mesh.get_mesh_data(obj)
-                if mesh_cache is not None:
-                    self._draw_summary_table(self.layout, mesh_cache)
+                mesh_data = mesh.cache.get(obj)
+                if mesh_data is not None:
+                    self._draw_summary_table(self.layout, mesh_data)
                     self.layout.separator()
-                    self._draw_budget(self.layout, context, mesh_cache)
+                    self._draw_budget(self.layout, context, mesh_data)
                     self.layout.separator()
                     self.layout.label(text="Overlay options")
                     self._draw_overlay_options(context, self.layout)
@@ -103,7 +103,7 @@ class VIEW3D_PT_meshstats(MeshstatsPanel):
                 self.layout.operator("meshstats.meshstats_enable_object")
 
     @staticmethod
-    def _draw_budget(layout, context, mesh_cache):
+    def _draw_budget(layout, context, mesh_data):
         obj = meshstats_context.get_object(context)
         props = obj.meshstats
 
@@ -120,11 +120,11 @@ class VIEW3D_PT_meshstats(MeshstatsPanel):
             row.prop(props, "face_budget", text="Budget")
             row.prop(props, "face_budget_type", text="")
             col.label(text="Utilization is {:.2%}.".format(
-                mesh_cache.face_budget_utilization(obj.meshstats)
+                mesh_data.face_budget_utilization(obj.meshstats)
             ))
 
     @staticmethod
-    def _draw_summary_table(layout, mesh_cache):
+    def _draw_summary_table(layout, mesh_data):
         layout.label(text="Face Count")
         box = layout.box()
         j = box.grid_flow(columns=3)
@@ -135,19 +135,19 @@ class VIEW3D_PT_meshstats(MeshstatsPanel):
         j.label(text="Total")
 
         j.label(text="count")
-        j.label(text="{}".format(mesh_cache.tris_count))
-        j.label(text="{}".format(mesh_cache.quads_count))
-        j.label(text="{}".format(mesh_cache.ngons_count))
-        j.label(text="{}".format(mesh_cache.face_count))
+        j.label(text="{}".format(mesh_data.tris_count))
+        j.label(text="{}".format(mesh_data.quads_count))
+        j.label(text="{}".format(mesh_data.ngons_count))
+        j.label(text="{}".format(mesh_data.face_count))
 
         j.label(text="percentage")
-        j.label(text="{}%".format(mesh_cache.tris_percentage))
-        j.label(text="{}%".format(mesh_cache.quads_percentage))
-        j.label(text="{}%".format(mesh_cache.ngons_percentage))
+        j.label(text="{}%".format(mesh_data.tris_percentage))
+        j.label(text="{}%".format(mesh_data.quads_percentage))
+        j.label(text="{}%".format(mesh_data.ngons_percentage))
         j.label(text="{}%".format(
-            mesh_cache.tris_percentage
-            + mesh_cache.quads_percentage
-            + mesh_cache.ngons_percentage
+            mesh_data.tris_percentage
+            + mesh_data.quads_percentage
+            + mesh_data.ngons_percentage
         ))
 
         layout.label(text="Poles")
@@ -158,10 +158,10 @@ class VIEW3D_PT_meshstats(MeshstatsPanel):
         j.label(text="*-poles")
         j.label(text="Total")
 
-        j.label(text="{}".format(len(mesh_cache.n_poles)))
-        j.label(text="{}".format(len(mesh_cache.e_poles)))
-        j.label(text="{}".format(len(mesh_cache.star_poles)))
-        j.label(text="{}".format(mesh_cache.total_poles_count))
+        j.label(text="{}".format(len(mesh_data.n_poles)))
+        j.label(text="{}".format(len(mesh_data.e_poles)))
+        j.label(text="{}".format(len(mesh_data.star_poles)))
+        j.label(text="{}".format(mesh_data.total_poles_count))
 
 
 class VIEW3D_PT_overlay_meshstats(MeshstatsPanel):
