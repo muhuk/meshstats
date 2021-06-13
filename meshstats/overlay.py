@@ -23,7 +23,6 @@ if "bpy" in locals():
 else:
     # stdlib
     from itertools import (chain, repeat)
-    from math import degrees
     import typing
     # blender
     import bgl
