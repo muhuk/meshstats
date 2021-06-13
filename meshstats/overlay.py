@@ -51,7 +51,7 @@ def draw_callback():
         smooth_shader = gpu.shader.from_builtin('3D_SMOOTH_COLOR')
 
     obj = meshstats_context.get_object()
-    if obj is None:
+    if obj is None or mesh.check_eligibility(obj) != mesh.Eligibility.OK:
         return
     transform_matrix = mathutils.Matrix(obj.matrix_world)
     context = bpy.context
