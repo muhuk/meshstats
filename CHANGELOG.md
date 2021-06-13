@@ -2,6 +2,19 @@
 
 ## [Unreleased]
 
+### Added
+
+- Implemented enabling & disabling meshstats per object.
+- Added a new preference option to choose whether meshstats is enabled or
+  disabled for newly created objects.
+
+### Changed
+
+- Caching is reimplemented.  Time-to-live for cache entries is increased from
+  500 milliseconds to 1 minute.  Cached data is updated when geommetry is
+  changed (via depsgraph) instead of relying on (very short) TTL to clear
+  stale data.
+
 ## [1.1] - 2020-12-21
 
 ### Added
