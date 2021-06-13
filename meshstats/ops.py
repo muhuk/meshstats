@@ -18,12 +18,12 @@
 
 if "bpy" in locals():
     import importlib
-    for mod in [mesh, meshstats_context]:  # noqa: F821
+    for mod in [constants, mesh, meshstats_context]:  # noqa: F821
         importlib.reload(mod)
 else:
     import bpy
     from meshstats import context as meshstats_context
-    from meshstats import mesh
+    from meshstats import (constants, mesh)
 
 
 class OBJECT_OT_MeshstatsDisableObject(bpy.types.Operator):
