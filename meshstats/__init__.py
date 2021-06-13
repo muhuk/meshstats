@@ -65,9 +65,9 @@ def register():
     )
 
     # Register Operations
-    bpy.utils.register_class(ops.MeshstatsDisableObject)
-    bpy.utils.register_class(ops.MeshstatsEnableObject)
-    bpy.utils.register_class(ops.MeshstatsResetSettings)
+    bpy.utils.register_class(ops.OBJECT_OT_MeshstatsDisableObject)
+    bpy.utils.register_class(ops.OBJECT_OT_MeshstatsEnableObject)
+    bpy.utils.register_class(ops.PREFERENCES_OT_MeshstatsResetSettings)
 
     # Register UI
     bpy.utils.register_class(ui.VIEW3D_PT_meshstats)
@@ -99,9 +99,9 @@ def unregister():
     bpy.utils.unregister_class(ui.VIEW3D_PT_meshstats)
 
     # Unregister Operations
-    bpy.utils.unregister_class(ops.MeshstatsDisableObject)
-    bpy.utils.unregister_class(ops.MeshstatsEnableObject)
-    bpy.utils.unregister_class(ops.MeshstatsResetSettings)
+    bpy.utils.unregister_class(ops.OBJECT_OT_MeshstatsDisableObject)
+    bpy.utils.unregister_class(ops.OBJECT_OT_MeshstatsEnableObject)
+    bpy.utils.unregister_class(ops.PREFERENCES_OT_MeshstatsResetSettings)
 
     # Unregister Props
     del bpy.types.Object.meshstats

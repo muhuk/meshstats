@@ -106,7 +106,7 @@ class MeshstatsAddonPreferences(bpy.types.AddonPreferences):
         col.prop(self, "overlay_e_poles_color")
         col.prop(self, "overlay_star_poles_color")
         layout.separator()
-        layout.operator(ops.MeshstatsResetSettings.bl_idname)
+        layout.operator(ops.PREFERENCES_OT_MeshstatsResetSettings.bl_idname)
 
 
 def _get_status(self):

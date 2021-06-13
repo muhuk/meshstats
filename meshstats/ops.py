@@ -26,9 +26,9 @@ else:
     from meshstats import mesh
 
 
-class MeshstatsDisableObject(bpy.types.Operator):
+class OBJECT_OT_MeshstatsDisableObject(bpy.types.Operator):
     """Enable Meshstats for object"""
-    bl_idname = "meshstats.meshstats_disable_object"
+    bl_idname = "object.meshstats_disable_object"
     bl_label = "Disable"
 
     def execute(self, context):
@@ -41,9 +41,9 @@ class MeshstatsDisableObject(bpy.types.Operator):
             return {'CANCELLED'}
 
 
-class MeshstatsEnableObject(bpy.types.Operator):
+class OBJECT_OT_MeshstatsEnableObject(bpy.types.Operator):
     """Enable Meshstats for object"""
-    bl_idname = "meshstats.meshstats_enable_object"
+    bl_idname = "object.meshstats_enable_object"
     bl_label = "Enable"
 
     def execute(self, context):
@@ -58,7 +58,7 @@ class MeshstatsEnableObject(bpy.types.Operator):
             return {'CANCELLED'}
 
 
-class MeshstatsResetSettings(bpy.types.Operator):
+class PREFERENCES_OT_MeshstatsResetSettings(bpy.types.Operator):
     """Reset Meshstats settings"""
     bl_idname = "preferences.meshstats_reset_settings"
     bl_label = "Reset Meshstats settings"
