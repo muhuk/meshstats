@@ -87,31 +87,32 @@ class VIEW3D_PT_meshstats(MeshstatsPanel):
                 mesh_data = mesh.cache.get(obj)
                 if mesh_data is not None:
                     self._draw_summary_table(self.layout, mesh_data)
-                    self.layout.separator()
+                    self.layout.separator(factor=0.75)
                     self._draw_budget(self.layout, context, mesh_data)
-                    self.layout.separator()
-                    self.layout.label(text="Overlay options")
+                    self.layout.separator(factor=0.75)
+                    self.layout.label(text="Overlays:")
                     self._draw_overlay_options(context, self.layout)
                 else:
                     self.layout.alert = True
                     self.layout.label(text="Calculating...")
                     self.layout.alert = False
-                self.layout.operator("object.meshstats_disable_object")
+                self.layout.separator(factor=1.5)
+                self.layout.operator("object.meshstats_disable_object", icon='QUIT')
             elif eligibility == mesh.Eligibility.TOO_MANY_FACES:
                 self.layout.alert = True
                 self.layout.label(text="Too many faces")
                 self.layout.alert = False
-                self.layout.operator("object.meshstats_disable_object")
+                self.layout.operator("object.meshstats_disable_object", icon='QUIT')
             elif eligibility == mesh.Eligibility.DISABLED:
                 self.layout.label(text="Disabled on this object.")
-                self.layout.operator("object.meshstats_enable_object")
+                self.layout.operator("object.meshstats_enable_object", icon='QUIT')
 
     @staticmethod
     def _draw_budget(layout, context, mesh_data):
         obj = meshstats_context.get_object(context)
         props = obj.meshstats
 
-        layout.label(text="Budget")
+        layout.label(text="Budget:")
         col = layout.column(align=True)
         col.prop(
             props,
@@ -129,7 +130,7 @@ class VIEW3D_PT_meshstats(MeshstatsPanel):
 
     @staticmethod
     def _draw_summary_table(layout, mesh_data):
-        layout.label(text="Face Count")
+        layout.label(text="Faces:")
         box = layout.box()
         j = box.grid_flow(columns=3)
         j.label(text="")
@@ -154,7 +155,7 @@ class VIEW3D_PT_meshstats(MeshstatsPanel):
             + mesh_data.ngons_percentage
         ))
 
-        layout.label(text="Poles")
+        layout.label(text="Poles:")
         box = layout.box()
         j = box.grid_flow(columns=2)
         j.label(text="N-poles")
