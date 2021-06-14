@@ -31,14 +31,15 @@ class OBJECT_OT_MeshstatsDisableObject(bpy.types.Operator):
     bl_idname = "object.meshstats_disable_object"
     bl_label = "Disable"
 
+    @classmethod
+    def poll(cls, context):
+        return meshstats_context.get_object(context) is not None
+
     def execute(self, context):
         obj = meshstats_context.get_object(context)
-        if obj is not None:
-            obj.meshstats.status = 'DISABLED'
-            context.area.tag_redraw()
-            return {'FINISHED'}
-        else:
-            return {'CANCELLED'}
+        obj.meshstats.status = 'DISABLED'
+        context.area.tag_redraw()
+        return {'FINISHED'}
 
 
 class OBJECT_OT_MeshstatsEnableObject(bpy.types.Operator):
@@ -46,15 +47,16 @@ class OBJECT_OT_MeshstatsEnableObject(bpy.types.Operator):
     bl_idname = "object.meshstats_enable_object"
     bl_label = "Enable"
 
+    @classmethod
+    def poll(cls, context):
+        return meshstats_context.get_object(context) is not None
+
     def execute(self, context):
         obj = meshstats_context.get_object(context)
-        if obj is not None:
-            obj.meshstats.status = 'ENABLED'
-            mesh.cache.update(obj)
-            context.area.tag_redraw()
-            return {'FINISHED'}
-        else:
-            return {'CANCELLED'}
+        obj.meshstats.status = 'ENABLED'
+        mesh.cache.update(obj)
+        context.area.tag_redraw()
+        return {'FINISHED'}
 
 
 class PREFERENCES_OT_MeshstatsResetSettings(bpy.types.Operator):
