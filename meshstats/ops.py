@@ -50,9 +50,8 @@ class OBJECT_OT_MeshstatsEnableObject(bpy.types.Operator):
         obj = meshstats_context.get_object(context)
         if obj is not None:
             obj.meshstats.status = 'ENABLED'
-            if mesh.check_eligibility(obj) == mesh.Eligibility.OK:
-                mesh.cache.update(obj)
-                context.area.tag_redraw()
+            mesh.cache.update(obj)
+            context.area.tag_redraw()
             return {'FINISHED'}
         else:
             return {'CANCELLED'}
