@@ -98,6 +98,7 @@ class VIEW3D_PT_meshstats(MeshstatsPanel):
                 self.layout.operator("object.meshstats_disable_object")
             elif eligibility == mesh.Eligibility.TOO_MANY_FACES:
                 self.layout.label(text="Too many faces")
+                self.layout.operator("object.meshstats_disable_object")
             elif eligibility == mesh.Eligibility.DISABLED:
                 self.layout.label(text="Meshstats is disabled on this object.")
                 self.layout.operator("object.meshstats_enable_object")
