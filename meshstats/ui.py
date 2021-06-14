@@ -21,6 +21,7 @@ if "bpy" in locals():
     for mod in [meshstats_context, icon, mesh]:  # noqa: F821
         importlib.reload(mod)
 else:
+    import typing
     import bpy
     from meshstats import context as meshstats_context
     from meshstats import (icon, mesh)
@@ -97,15 +98,24 @@ class VIEW3D_PT_meshstats(MeshstatsPanel):
                     self.layout.label(text="Calculating...")
                     self.layout.alert = False
                 self.layout.separator(factor=1.5)
-                self.layout.operator("object.meshstats_disable_object", icon='QUIT')
+                self.layout.operator(
+                    "object.meshstats_disable_object",
+                    icon='QUIT'
+                )
             elif eligibility == mesh.Eligibility.TOO_MANY_FACES:
                 self.layout.alert = True
                 self.layout.label(text="Too many faces")
                 self.layout.alert = False
-                self.layout.operator("object.meshstats_disable_object", icon='QUIT')
+                self.layout.operator(
+                    "object.meshstats_disable_object",
+                    icon='QUIT'
+                )
             elif eligibility == mesh.Eligibility.DISABLED:
                 self.layout.label(text="Disabled on this object.")
-                self.layout.operator("object.meshstats_enable_object", icon='QUIT')
+                self.layout.operator(
+                    "object.meshstats_enable_object",
+                    icon='QUIT'
+                )
 
     @staticmethod
     def _draw_budget(layout, context, mesh_data):
@@ -124,9 +134,14 @@ class VIEW3D_PT_meshstats(MeshstatsPanel):
             row = col.row(align=True)
             row.prop(props, "face_budget", text="Budget")
             row.prop(props, "face_budget_type", text="")
-            col.label(text="Utilization is {:.2%}.".format(
-                mesh_data.face_budget_utilization(obj.meshstats)
-            ))
+            u: typing.Optional[float] = mesh_data.face_budget_utilization(
+                obj.meshstats
+            )
+            assert u is not None
+            if u > 1.0:
+                col.alert = True
+            col.label(text="Utilization is {:.2%}.".format(u))
+            col.alert = False
 
     @staticmethod
     def _draw_summary_table(layout, mesh_data):
