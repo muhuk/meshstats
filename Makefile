@@ -15,7 +15,7 @@ ZIP_DIR = $(BUILD_DIR)/$(PACKAGE_NAME)
 
 build:
 	@mkdir -p $(BUILD_DIR)/$(PACKAGE_NAME)
-	@rsync -av --exclude="__pycache__" ./$(SOURCE_DIR)/ $(BUILD_DIR)/$(PACKAGE_NAME)/$(NAME)
+	@rsync -av --exclude-from=build_excludes.txt ./$(SOURCE_DIR)/ $(BUILD_DIR)/$(PACKAGE_NAME)/$(NAME)
 	@cp COPYING.txt $(BUILD_DIR)/$(PACKAGE_NAME)/$(NAME)
 	@cd $(BUILD_DIR)/$(PACKAGE_NAME); zip -r "$(PACKAGE_NAME).zip" $(NAME)
 	@mv $(BUILD_DIR)/$(PACKAGE_NAME)/$(PACKAGE_NAME).zip $(BUILD_DIR)/
