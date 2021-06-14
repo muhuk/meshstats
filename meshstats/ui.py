@@ -76,8 +76,9 @@ class VIEW3D_PT_meshstats(MeshstatsPanel):
     def draw(self, context):
         obj = meshstats_context.get_object(context)
         if obj is None:
+            self.layout.alert = True
             self.layout.label(
-                text="Mesh statistics is only available for meshes."
+                text="Not a mesh."
             )
         else:
             self.layout.label(text="Active object: {}".format(obj.name))
@@ -97,10 +98,12 @@ class VIEW3D_PT_meshstats(MeshstatsPanel):
                     self.layout.alert = False
                 self.layout.operator("object.meshstats_disable_object")
             elif eligibility == mesh.Eligibility.TOO_MANY_FACES:
+                self.layout.alert = True
                 self.layout.label(text="Too many faces")
+                self.layout.alert = False
                 self.layout.operator("object.meshstats_disable_object")
             elif eligibility == mesh.Eligibility.DISABLED:
-                self.layout.label(text="Meshstats is disabled on this object.")
+                self.layout.label(text="Disabled on this object.")
                 self.layout.operator("object.meshstats_enable_object")
 
     @staticmethod
