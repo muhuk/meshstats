@@ -27,7 +27,7 @@ else:
 
 
 class OBJECT_OT_MeshstatsDisableObject(bpy.types.Operator):
-    """Enable Meshstats for object"""
+    """Disable Meshstats for object"""
     bl_idname = "object.meshstats_disable_object"
     bl_label = "Disable"
 
