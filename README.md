@@ -1,18 +1,20 @@
 # meshstats
 
-[Blender](https://www.blender.org/) addon that provides mesh statistics.
+[Blender](https://www.blender.org/) addon that provides topological statistics
+for meshes.
 
 meshstats is released with [GPL license](./COPYING.txt), same as [Blender](https://www.blender.org/about/license/)
 
 ## Features
 
 - Display counts for tris, quads & ngons.
-- Display counts for e-poles (vertices with 5 edges), n-poles (vertices with 3
-  edges) and *-poles (vertices with 6 or more edges - fan center).
+- Display counts for e-poles (vertices connecting 5 edges), n-poles (vertices
+  connecting 3 edges) and *-poles (vertices connecting 6 or more edges - fan
+  center).
 - Set a polygon budget for mesh objects and display how much of it is
   utilized.
-- Display quads & tris as an overlay. (in object mode)
-- Display e-poles, n-poles & *-poles as an overlay. (in object mode)
+- Highlight tris & ngons in the viewport. (in object mode only)
+- Highlight e-poles, n-poles & *-poles in the viewport. (in object mode only)
 
 See [CHANGELOG.md](./CHANGELOG.md) for release details.
 
