@@ -1,6 +1,6 @@
 # Changelog
 
-## [Unreleased]
+## [1.2] - 2021-06-15
 
 ### Added
 
@@ -14,6 +14,8 @@
   500 milliseconds to 1 minute.  Cached data is updated when geommetry is
   changed (via depsgraph) instead of relying on (very short) TTL to clear
   stale data.
+- In addition to other minor tweats in the UI, when polygon count is over
+  budget, utilization is displayed with emphasis (alert).
 
 ## [1.1] - 2020-12-21
 
@@ -83,7 +85,7 @@
 - Allow enabling & disabling the overlay.  This setting is saved with the
   scene.
 
-[Unreleased]: https://github.com/muhuk/meshstats/compare/v1.1...HEAD
+[1.2]: https://github.com/muhuk/meshstats/compare/v1.1...v1.2
 [1.1]: https://github.com/muhuk/meshstats/compare/v1.0...v1.1
 [1.0]: https://github.com/muhuk/meshstats/compare/v0.3...v1.0
 [0.3]: https://github.com/muhuk/meshstats/compare/v0.2...v0.3
