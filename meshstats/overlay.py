@@ -25,7 +25,6 @@ else:
     from itertools import (chain, repeat)
     import typing
     # blender
-    import bgl
     import bpy
     import bpy.types
     from bpy_extras.view3d_utils import location_3d_to_region_2d
@@ -66,9 +65,11 @@ def draw_callback():
     color_e_poles = addon_prefs.overlay_e_poles_color
     color_star_poles = addon_prefs.overlay_star_poles_color
 
-    bgl.glEnable(bgl.GL_BLEND)
-    bgl.glLineWidth(3)
-    bgl.glPointSize(8)
+    saved_blend = gpu.state.blend_get()
+    gpu.state.blend_set('ALPHA')
+    gpu.state.point_size_set(8)
+    saved_line_width = gpu.state.line_width_get()
+    gpu.state.line_width_set(3)
 
     props = context.scene.meshstats
     if props.overlay_tris:
@@ -116,9 +117,9 @@ def draw_callback():
         )
 
     # Reset defaults
-    bgl.glDisable(bgl.GL_BLEND)
-    bgl.glLineWidth(1)
-    bgl.glPointSize(1)
+    gpu.state.blend_set(saved_blend)
+    gpu.state.point_size_set(1)
+    gpu.state.line_width_set(saved_line_width)
 
 
 def _draw_overlay_faces(
