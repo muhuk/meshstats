@@ -141,10 +141,12 @@ def _draw_overlay_faces(
             shader.uniform_float("color", color)
         else:
             shader.uniform_float("color", faded_color)
+        vertices = list(face_.vertices)
+        vertices = vertices + vertices[0:1]
         batch = gpu_extras.batch.batch_for_shader(
             shader,
-            'LINE_LOOP',
-            {"pos": [transform_matrix @ v for v in face_.vertices]}
+            'LINE_STRIP',
+            {"pos": [transform_matrix @ v for v in vertices]}
         )
         batch.draw(shader)
 
