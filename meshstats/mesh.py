@@ -38,9 +38,6 @@ else:
     from meshstats import (face, pole, props)
 
 
-MESHDATA_TTL = 60_000  # milliseconds
-
-
 log = logging.getLogger(__name__)
 
 
@@ -257,12 +254,10 @@ class Cache:
         self.d = {}
 
     def get(self, obj: bpy.types.Object) -> typing.Optional[Mesh]:
+        self._evict_expired()
         assert obj.type == 'MESH'
         cache_key = hash(obj.data)
-        now = time.time_ns()
-        cached = self.d.get(cache_key)
-        if cached is None or \
-           cached.last_updated + MESHDATA_TTL < int(now / 1_000_000):
+        if self.d.get(cache_key) is None:
             self.update(obj)
         return self.d.get(cache_key)
 
@@ -288,13 +283,13 @@ class Cache:
         now = int(time.time_ns() / 1_000_000)
         expired_set = set()
         for (cache_key, m) in self.d.items():
-            if m.last_updated + MESHDATA_TTL < now:
-                log.debug("Evicting {} from cache".format(cache_key))
+            if m.last_updated + constants.MESHDATA_TTL < now:
                 expired_set.add(cache_key)
         for k in expired_set:
-            del(self.d[k])
-        del(expired_set)
-        log.debug("Cache size after eviction is {}".format(len(self.d)))
+            log.debug("Evicting {} from cache".format(cache_key))
+            del self.d[k]
+        del expired_set
+        log.debug("{} items in cache.".format(len(self.d)))
 
 
 cache = Cache()
