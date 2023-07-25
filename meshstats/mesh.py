@@ -27,7 +27,10 @@ else:
     import enum
     import time
     import typing
+    import itertools
     import logging
+    import math
+    import statistics
     # blender
     import bmesh
     import bpy
@@ -115,8 +118,11 @@ class Mesh:
 
         self._reset()
 
+        # TODO: Make this a addon preference.
+        flat_threshold_angle: float = 10.0  # degrees
+
         self._calculate_faces(bm)
-        self._calculate_poles(bm)
+        self._calculate_poles(bm, flat_threshold_angle)
 
         self._calculate_counts(bm)
         self._calculate_percentages()
@@ -201,18 +207,32 @@ class Mesh:
             else:
                 self.quads_percentage += 1
 
-    def _calculate_poles(self, bm: bmesh.types.BMesh) -> None:
+    def _calculate_poles(
+            self,
+            bm: bmesh.types.BMesh,
+            flat_threshold_angle: float
+    ) -> None:
+        flat_threshold: float = math.cos(math.radians(flat_threshold_angle))
         for vertex in bm.verts:
             edge_count = len(
                 [edge for edge in vertex.link_edges if not edge.is_boundary]
             )
             if edge_count == 3 or edge_count >= 5:
+                mean_dot_product: float = statistics.mean(map(
+                    lambda normals: abs(normals[0].dot(normals[1])),
+                    itertools.combinations(
+                        [f.normal for f in vertex.link_faces],
+                        2
+                    )
+                ))
+                is_flat: bool = mean_dot_product > flat_threshold
                 spokes = copy.deepcopy(
                     [e.other_vert(vertex).co for e in vertex.link_edges]
                 )
                 if edge_count == 3:
                     self.n_poles.append(pole.NPole(
                         center=copy.deepcopy(vertex.co),
+                        is_flat=is_flat,
                         spokes=typing.cast(typing.Tuple[mathutils.Vector,
                                                         mathutils.Vector,
                                                         mathutils.Vector],
@@ -221,6 +241,7 @@ class Mesh:
                 elif edge_count == 5:
                     self.e_poles.append(pole.EPole(
                         center=copy.deepcopy(vertex.co),
+                        is_flat=is_flat,
                         spokes=typing.cast(typing.Tuple[mathutils.Vector,
                                                         mathutils.Vector,
                                                         mathutils.Vector,
@@ -231,6 +252,7 @@ class Mesh:
                 elif edge_count > 5:
                     self.star_poles.append(pole.StarPole(
                         center=copy.deepcopy(vertex.co),
+                        is_flat=is_flat,
                         spokes=list(spokes)
                     ))
 

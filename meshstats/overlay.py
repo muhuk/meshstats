@@ -44,9 +44,9 @@ smooth_shader: typing.Optional[gpu.types.GPUShader] = None
 def draw_callback():
     global uniform_shader, smooth_shader
     if uniform_shader is None:
-        uniform_shader = gpu.shader.from_builtin('3D_UNIFORM_COLOR')
+        uniform_shader = gpu.shader.from_builtin('UNIFORM_COLOR')
     if smooth_shader is None:
-        smooth_shader = gpu.shader.from_builtin('3D_SMOOTH_COLOR')
+        smooth_shader = gpu.shader.from_builtin('SMOOTH_COLOR')
 
     obj = meshstats_context.get_object()
     if obj is None or mesh.check_eligibility(obj) != mesh.Eligibility.OK:
@@ -188,21 +188,38 @@ def _draw_overlay_poles(
         batch.draw(uniform_shader)
 
         # Draw spokes
-        smooth_shader.bind()
-        batch = gpu_extras.batch.batch_for_shader(
-            smooth_shader,
-            'LINES',
-            {
-                "pos": list(chain(*zip(repeat(pole_center), midpoints))),
-                "color": list(
-                    chain(*repeat(
-                        [use_color, zeroed_color],
-                        len(pole_.spokes)
-                    ))
-                )
-            }
-        )
-        batch.draw(smooth_shader)
+        print(pole_.is_flat)
+        if pole_.is_flat:
+            smooth_shader.bind()
+            batch = gpu_extras.batch.batch_for_shader(
+                smooth_shader,
+                'LINES',
+                {
+                    "pos": list(chain(*zip(repeat(pole_center), midpoints))),
+                    "color": list(
+                        chain(*repeat(
+                            [use_color, zeroed_color],
+                            len(pole_.spokes)
+                        ))
+                    )
+                }
+            )
+            batch.draw(smooth_shader)
+        else:
+            batch = gpu_extras.batch.batch_for_shader(
+                smooth_shader,
+                'LINES',
+                {
+                    "pos": list(chain(*zip(repeat(pole_center), midpoints))),
+                    "color": list(
+                        chain(*repeat(
+                            [use_color, use_color],
+                            len(pole_.spokes)
+                        ))
+                    )
+                }
+            )
+            batch.draw(smooth_shader)
 
 
 def _is_visible(

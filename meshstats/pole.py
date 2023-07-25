@@ -25,12 +25,14 @@ import mathutils
 
 class Pole(abc.ABC):
     center: mathutils.Vector
+    is_flat: bool
     spokes: Collection[mathutils.Vector]
 
 
 @dataclass(frozen=True)
 class EPole(Pole):
     center: mathutils.Vector
+    is_flat: bool
     spokes: Tuple[
         mathutils.Vector,
         mathutils.Vector,
@@ -43,6 +45,7 @@ class EPole(Pole):
 @dataclass(frozen=True)
 class NPole(Pole):
     center: mathutils.Vector
+    is_flat: bool
     spokes: Tuple[
         mathutils.Vector,
         mathutils.Vector,
@@ -53,4 +56,5 @@ class NPole(Pole):
 @dataclass(frozen=True)
 class StarPole(Pole):
     center: mathutils.Vector
+    is_flat: bool
     spokes: List[mathutils.Vector]
