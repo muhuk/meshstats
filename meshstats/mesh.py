@@ -112,17 +112,21 @@ class Mesh:
         else:
             return None
 
-    def update(self, obj: bpy.types.Object) -> None:
+    def update(
+            self,
+            context: bpy.types.Context,
+            obj: bpy.types.Object
+    ) -> None:
         bm = bmesh.new()
         bm.from_mesh(obj.data)
 
         self._reset()
 
-        # TODO: Make this a addon preference.
-        flat_threshold_angle: float = 10.0  # degrees
+        addon_prefs = context.preferences.addons[constants.ADDON_NAME] \
+                                         .preferences
 
         self._calculate_faces(bm)
-        self._calculate_poles(bm, flat_threshold_angle)
+        self._calculate_poles(bm, addon_prefs.flat_threshold_angle)
 
         self._calculate_counts(bm)
         self._calculate_percentages()
@@ -275,15 +279,23 @@ class Cache:
     def __init__(self):
         self.d = {}
 
-    def get(self, obj: bpy.types.Object) -> typing.Optional[Mesh]:
+    def get(
+            self,
+            context: bpy.types.Context,
+            obj: bpy.types.Object
+    ) -> typing.Optional[Mesh]:
         self._evict_expired()
         assert obj.type == 'MESH'
         cache_key = hash(obj.data)
         if self.d.get(cache_key) is None:
-            self.update(obj)
+            self.update(context, obj)
         return self.d.get(cache_key)
 
-    def update(self, obj: bpy.types.Object) -> None:
+    def update(
+            self,
+            context: bpy.types.Context,
+            obj: bpy.types.Object
+    ) -> None:
         self._evict_expired()
         start = time.time_ns()
         assert obj.type == 'MESH'
@@ -292,7 +304,7 @@ class Cache:
         if cached is None:
             cached = Mesh()
             self.d[cache_key] = cached
-        cached.update(obj)
+        cached.update(context, obj)
         time_taken = int((time.time_ns() - start) / 1_000_000)
         log.info(
             "Updated meshstats data for '{0}' in {1}ms.".format(

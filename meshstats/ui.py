@@ -74,7 +74,7 @@ class VIEW3D_PT_meshstats(MeshstatsPanel):
     bl_idname = "VIEW3D_PT_meshstats"
     bl_label = "Meshstats"
 
-    def draw(self, context):
+    def draw(self, context: bpy.types.Context) -> None:
         obj = meshstats_context.get_object(context)
         if obj is None:
             self.layout.alert = True
@@ -85,7 +85,7 @@ class VIEW3D_PT_meshstats(MeshstatsPanel):
             self.layout.label(text="Active object: {}".format(obj.name))
             eligibility: mesh.Eligibility = mesh.check_eligibility(obj)
             if eligibility == mesh.Eligibility.OK:
-                mesh_data = mesh.cache.get(obj)
+                mesh_data = mesh.cache.get(context, obj)
                 if mesh_data is not None:
                     self._draw_summary_table(self.layout, mesh_data)
                     self.layout.separator(factor=0.75)

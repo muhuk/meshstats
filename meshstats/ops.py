@@ -54,7 +54,7 @@ class OBJECT_OT_MeshstatsEnableObject(bpy.types.Operator):
     def execute(self, context):
         obj = meshstats_context.get_object(context)
         obj.meshstats.status = 'ENABLED'
-        mesh.cache.update(obj)
+        mesh.cache.update(context, obj)
         context.area.tag_redraw()
         return {'FINISHED'}
 
@@ -69,6 +69,8 @@ class PREFERENCES_OT_MeshstatsResetSettings(bpy.types.Operator):
             context.preferences.addons[constants.ADDON_NAME].preferences
         addon_prefs.disabled_by_default = constants.DISABLED_BY_DEFAULT_DEFAULT
         addon_prefs.object_face_limit = constants.OBJECT_FACE_LIMIT_DEFAULT
+        addon_prefs.flat_threshold_angle = \
+            constants.FLAT_THRESHOLD_ANGLE_DEFAULT
         addon_prefs.overlay_tris_color = constants.OVERLAY_TRIS_COLOR_DEFAULT
         addon_prefs.overlay_ngons_color = constants.OVERLAY_NGONS_COLOR_DEFAULT
         addon_prefs.overlay_n_poles_color = \

@@ -45,6 +45,14 @@ class MeshstatsAddonPreferences(bpy.types.AddonPreferences):
         step=constants.OBJECT_FACE_LIMIT_STEP
     )
 
+    flat_threshold_angle: bpy.props.FloatProperty(
+        name="flat_threshold_angle",
+        description="Maximum average angle (in degrees) between faces to be considered a flat surface.",
+        default=constants.FLAT_THRESHOLD_ANGLE_DEFAULT,
+        min=0.0,
+        max=90.0
+    )
+
     overlay_tris_color: bpy.props.FloatVectorProperty(
         name="overlay_tris_color",
         description="Color to be used to draw overlay of tris in 3D view.",
@@ -100,6 +108,7 @@ class MeshstatsAddonPreferences(bpy.types.AddonPreferences):
         col.prop(self, "object_face_limit")
         layout.separator()
         col = layout.column(align=True, heading="Overlay Preferences")
+        col.prop(self, "flat_threshold_angle")
         col.prop(self, "overlay_tris_color")
         col.prop(self, "overlay_ngons_color")
         col.prop(self, "overlay_n_poles_color")

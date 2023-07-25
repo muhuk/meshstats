@@ -55,7 +55,7 @@ def draw_callback():
     context = bpy.context
     if context.space_data.overlay.show_overlays is False:
         return
-    mesh_data = mesh.cache.get(obj)
+    mesh_data = mesh.cache.get(context, obj)
     if mesh_data is None:
         return
     addon_prefs = context.preferences.addons[constants.ADDON_NAME].preferences
