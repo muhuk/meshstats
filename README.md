@@ -47,8 +47,14 @@ Once you have enabled the addon, you should see a `Meshstats` panel under
 1. Select a mesh object.
 2. You must be in `Object Mode`.
 3. Open `3D Viewport`'s sidebar, `Item` tab.
+4. If `disabled_by_default` is active in addon preferences you need to click
+   `Enable` button in `Meshtats` panel.
 
 ![how_to_view_face_counts.png](./img/how_to_view_face_counts.png)
+
+Note that even if you enable Meshtats for an object, if the mesh contains too
+many faces (configurable in addon preferences) you won't see stats or
+overlays.
 
 ### How to Display Tri & Ngon Overlays
 
