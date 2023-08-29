@@ -350,12 +350,16 @@ def app__load_pre_handler(*args_):
 
 
 @bpy.app.handlers.persistent
-def app__depsgraph_update_post(scene, depsgraph):
+def app__depsgraph_update_post(
+        scene: bpy.types.Scene,
+        depsgraph: bpy.types.Depsgraph
+) -> None:
     global cache
-    obj = meshstats_context.get_object()
+    context: bpy.types.Context = bpy.context
+    obj = meshstats_context.get_object(context)
     if obj is not None:
         for u in depsgraph.updates:
             if u.id.original == obj \
                and u.is_updated_geometry \
                and check_eligibility(obj) == Eligibility.OK:
-                cache.update(obj)
+                cache.update(context, obj)
