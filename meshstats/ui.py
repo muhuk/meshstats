@@ -83,39 +83,46 @@ class VIEW3D_PT_meshstats(MeshstatsPanel):
             )
         else:
             self.layout.label(text="Active object: {}".format(obj.name))
-            eligibility: mesh.Eligibility = mesh.check_eligibility(obj)
-            if eligibility == mesh.Eligibility.OK:
-                mesh_data = mesh.cache.get(context, obj)
-                if mesh_data is not None:
-                    self._draw_summary_table(self.layout, mesh_data)
-                    self.layout.separator(factor=0.75)
-                    self._draw_budget(self.layout, context, mesh_data)
-                    self.layout.separator(factor=0.75)
-                    self.layout.label(text="Overlays:")
-                    self._draw_overlay_options(context, self.layout)
-                else:
+
+            match mesh.check_eligibility(obj):
+                case mesh.Eligibility.OK:
+                    mesh_data = mesh.cache.get(context, obj)
+                    if mesh_data is not None:
+                        self._draw_summary_table(self.layout, mesh_data)
+                        self.layout.separator(factor=0.75)
+                        self._draw_budget(self.layout, context, mesh_data)
+                        self.layout.separator(factor=0.75)
+                        self.layout.label(text="Overlays:")
+                        self._draw_overlay_options(context, self.layout)
+                    else:
+                        self.layout.alert = True
+                        self.layout.label(text="Calculating...")
+                        self.layout.alert = False
+                    self.layout.separator(factor=1.5)
+                    self.layout.operator(
+                        "object.meshstats_disable_object",
+                        icon='QUIT'
+                    )
+                case mesh.Eligibility.TOO_MANY_FACES:
                     self.layout.alert = True
-                    self.layout.label(text="Calculating...")
+                    self.layout.label(text="Too many faces")
                     self.layout.alert = False
-                self.layout.separator(factor=1.5)
-                self.layout.operator(
-                    "object.meshstats_disable_object",
-                    icon='QUIT'
-                )
-            elif eligibility == mesh.Eligibility.TOO_MANY_FACES:
-                self.layout.alert = True
-                self.layout.label(text="Too many faces")
-                self.layout.alert = False
-                self.layout.operator(
-                    "object.meshstats_disable_object",
-                    icon='QUIT'
-                )
-            elif eligibility == mesh.Eligibility.DISABLED:
-                self.layout.label(text="Disabled on this object.")
-                self.layout.operator(
-                    "object.meshstats_enable_object",
-                    icon='QUIT'
-                )
+                    self.layout.operator(
+                        "object.meshstats_disable_object",
+                        icon='QUIT'
+                    )
+                case mesh.Eligibility.MODIFIER:
+                    self.layout.label(text="Disabled by modifier on this object.")
+                    self.layout.operator(
+                        "object.meshstats_disable_object",
+                        icon='QUIT'
+                    )
+                case mesh.Eligibility.DISABLED:
+                    self.layout.label(text="Disabled on this object.")
+                    self.layout.operator(
+                        "object.meshstats_enable_object",
+                        icon='QUIT'
+                    )
 
     @staticmethod
     def _draw_budget(layout, context, mesh_data):
