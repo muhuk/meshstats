@@ -188,7 +188,6 @@ def _draw_overlay_poles(
         batch.draw(uniform_shader)
 
         # Draw spokes
-        print(pole_.is_flat)
         if pole_.is_flat:
             smooth_shader.bind()
             batch = gpu_extras.batch.batch_for_shader(
