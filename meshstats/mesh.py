@@ -289,7 +289,7 @@ class Cache:
     ) -> typing.Optional[Mesh]:
         self._evict_expired()
         assert obj.type == 'MESH'
-        cache_key = hash(obj.data)
+        cache_key = hash(obj)
         if self.d.get(cache_key) is None:
             self.update(context, obj)
         return self.d.get(cache_key)
@@ -302,7 +302,7 @@ class Cache:
         self._evict_expired()
         start = time.time_ns()
         assert obj.type == 'MESH'
-        cache_key = hash(obj.data)
+        cache_key = hash(obj)
         cached = self.d.get(cache_key)
         if cached is None:
             cached = Mesh()
