@@ -47,7 +47,8 @@ class MeshstatsAddonPreferences(bpy.types.AddonPreferences):
 
     flat_threshold_angle: bpy.props.FloatProperty(
         name="flat_threshold_angle",
-        description="Maximum average angle (in degrees) between faces to be considered a flat surface.",
+        description="Maximum average angle (in degrees) between"
+                    + " faces to be considered a flat surface.",
         default=constants.FLAT_THRESHOLD_ANGLE_DEFAULT,
         min=0.0,
         max=90.0

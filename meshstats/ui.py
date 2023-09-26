@@ -112,7 +112,9 @@ class VIEW3D_PT_meshstats(MeshstatsPanel):
                         icon='QUIT'
                     )
                 case mesh.Eligibility.MODIFIER:
-                    self.layout.label(text="Disabled by modifier on this object.")
+                    self.layout.label(
+                        text="Disabled by modifier on this object."
+                    )
                     self.layout.operator(
                         "object.meshstats_disable_object",
                         icon='QUIT'
