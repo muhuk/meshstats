@@ -24,6 +24,43 @@ FLAT_THRESHOLD_ANGLE_DEFAULT = 10.0  # degrees
 
 MESHDATA_TTL = 60_000  # milliseconds
 
+MODIFIERS_WHITELISTED = [
+    # Modify Group
+    'DATA_TRANSFER',
+    'MESH_CACHE',
+    'MESH_SEQUENCE_CACHE',
+    'NORMAL_EDIT',
+    'WEIGHTED_NORMAL',
+    'UV_PROJECT',
+    'UV_WARP',
+    'VERTEX_WEIGHT_EDIT',
+    'VERTEX_WEIGHT_MIX',
+    'VERTEX_WEIGHT_PROXIMITY',
+    # Generate group is all blacklisted
+    # Deform Group
+    'ARMATURE',
+    'CAST',
+    'CURVE',
+    'DISPLACE',
+    'HOOK',
+    'LAPLACIANDEFORM',
+    'LATTICE',
+    'MESH_DEFORM',
+    'SHRINKWRAP',
+    'SIMPLE_DEFORM',
+    'SMOOTH',
+    'CORRECTIVE_SMOOTH',
+    'LAPLACIANSMOOTH',
+    'SURFACE_DEFORM',
+    'WARP',
+    'WAVE',
+    'VOLUME_DISPLACE',
+    # Physics Group
+    'COLLISION',
+    'PARTICLE_SYSTEM',
+    'SOFT_BODY'
+]
+
 OBJECT_FACE_LIMIT_DEFAULT = 10_000
 OBJECT_FACE_LIMIT_MAX = 10_000_000
 OBJECT_FACE_LIMIT_MIN = 1

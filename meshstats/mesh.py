@@ -122,8 +122,6 @@ class Mesh:
         # Using `from_object` instead of `from_mesh` allows overlays to be
         # displayed correctly on deformed meshes.
         bm.from_object(obj, context.evaluated_depsgraph_get())
-        for m in obj.modifiers:
-            print("active in viewport: {}".format(m.show_viewport))
 
         self._reset()
 
@@ -344,7 +342,9 @@ def check_eligibility(obj: bpy.types.Object) -> Eligibility:
     elif len(obj.data.polygons) > addon_prefs.object_face_limit:
         log.debug("Mesh '{}' has too many faces.".format(obj.data.name))
         return Eligibility.TOO_MANY_FACES
-    elif any([m for m in obj.modifiers if m.show_viewport]):
+    elif any([m for m in obj.modifiers
+              if m.show_viewport
+              and m.type not in constants.MODIFIERS_WHITELISTED]):
         return Eligibility.MODIFIER
     else:
         return Eligibility.OK
