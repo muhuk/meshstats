@@ -1,5 +1,18 @@
 # Changelog
 
+## [1.3] - 2023-09-23
+
+### Changed
+
+- Overlay displays poles on flat surfaces with less emphasis.  What is
+  considered as _flat_ is configurable via `flat_threshold_angle` in addon
+  settings.
+
+### Fixed
+
+- Overlay was displayed based on mesh data, without taking into account
+  deformations from armatures, shape keys and modifiers.
+
 ## [1.2] - 2021-06-15
 
 ### Added
@@ -85,6 +98,8 @@
 - Allow enabling & disabling the overlay.  This setting is saved with the
   scene.
 
+[unreleased]: https://github.com/muhuk/meshstats/compare/v1.3...HEAD
+[1.3]: https://github.com/muhuk/meshstats/compare/v1.2...v1.3
 [1.2]: https://github.com/muhuk/meshstats/compare/v1.1...v1.2
 [1.1]: https://github.com/muhuk/meshstats/compare/v1.0...v1.1
 [1.0]: https://github.com/muhuk/meshstats/compare/v0.3...v1.0

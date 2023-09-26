@@ -36,6 +36,7 @@ See [CHANGELOG.md](./CHANGELOG.md) for release details.
 | Meshstats version | Blender version |
 |-------------------|-----------------|
 | 1.0 - 1.2         | 2.91            |
+| 1.3               | 3.6.2           |
 
 ## Usage
 
@@ -53,8 +54,8 @@ Once you have enabled the addon, you should see a `Meshstats` panel under
 ![how_to_view_face_counts.png](./img/how_to_view_face_counts.png)
 
 Note that even if you enable Meshtats for an object, if the mesh contains too
-many faces (configurable in addon preferences) you won't see stats or
-overlays.
+many faces (configurable in addon preferences) or modifiers that change
+topology are active you won't see stats or overlays.
 
 ### How to Display Tri & Ngon Overlays
 
