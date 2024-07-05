@@ -24,7 +24,6 @@ import mathutils
 
 
 class Face(abc.ABC):
-    center: mathutils.Vector
     vertices: Iterable[mathutils.Vector]
     normal: mathutils.Vector
 
@@ -42,6 +41,5 @@ class FaceTri(Face):
 
 @dataclass(frozen=True)
 class FaceNgon(Face):
-    center: mathutils.Vector
     vertices: List[mathutils.Vector]
     normal: mathutils.Vector

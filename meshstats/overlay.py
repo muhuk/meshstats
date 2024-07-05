@@ -134,14 +134,24 @@ def _draw_overlay_faces(
 
     shader.bind()
     for face_ in faces:
-        if _is_visible(
-            context,
-            transform_matrix @ face_.center,
-            transform_matrix @ face_.normal
-        ):
-            shader.uniform_float("color", color)
-        else:
-            shader.uniform_float("color", faded_color)
+        match face_:
+            case face.FaceTri(center, _, _):
+                if _is_visible(
+                    context,
+                    transform_matrix @ center
+                ):
+                    shader.uniform_float("color", color)
+                else:
+                    shader.uniform_float("color", faded_color)
+            case face.FaceNgon(vertices, _):
+                # Points are lazily evaluated.  This saves some raycasts when
+                # the ngon is visible, but all points are always evaluated
+                # when the ngon is not visible.
+                if any((_is_visible(context, transform_matrix @ p)
+                        for p in vertices)):
+                    shader.uniform_float("color", color)
+                else:
+                    shader.uniform_float("color", faded_color)
         vertices = list(face_.vertices)
         vertices = vertices + vertices[0:1]
         batch = gpu_extras.batch.batch_for_shader(
@@ -224,7 +234,6 @@ def _draw_overlay_poles(
 def _is_visible(
         context: bpy.types.Context,
         point: mathutils.Vector,
-        normal: mathutils.Vector = None,
         epsilon: float = 0.00001
 ) -> bool:
     projected_vertex = location_3d_to_region_2d(

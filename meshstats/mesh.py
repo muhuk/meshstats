@@ -167,15 +167,13 @@ class Mesh:
                 del vertices, center
             elif len(face_.loops) > 4:
                 vertices = [copy.deepcopy(x.vert.co) for x in face_.loops]
-                center = face_.calc_center_median()
                 self.ngons.append(
                     face.FaceNgon(
-                        center=center,
                         vertices=vertices,
                         normal=copy.deepcopy(face_.normal),
                     )
                 )
-                del vertices, center
+                del vertices
 
     def _calculate_percentages(self) -> None:
         self.tris_percentage = int(self.tris_count * 100.0 / self.face_count)
