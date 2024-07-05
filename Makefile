@@ -4,14 +4,11 @@ PACKAGE_NAME = $(NAME)-$(VERSION)
 
 SOURCE_DIR = $(NAME)
 BUILD_DIR = ./release
-SCRIPTS_DIR = ./scripts
 
 
-ZIP_DIR = $(BUILD_DIR)/$(PACKAGE_NAME)
+.DEFAULT_GOAL := check
 
-.DEFAULT_GOAL  := run
-
-.PHONY: clean build relase run tag version
+.PHONY: clean build release check tag version
 
 build:
 	@mkdir -p $(BUILD_DIR)/$(PACKAGE_NAME)
