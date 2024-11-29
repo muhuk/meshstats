@@ -19,7 +19,6 @@ build:
 	@cp CHANGELOG.md $(BUILD_DIR)/$(PACKAGE_NAME)/$(NAME)
 	@cp blender_manifest.toml $(BUILD_DIR)/$(PACKAGE_NAME)/$(NAME)
 	@$(BLENDER_CMD) --command extension build --source-dir $(BUILD_DIR)/$(PACKAGE_NAME)/$(NAME) --output-dir $(BUILD_DIR)
-	@mv $(BUILD_DIR)/$(PACKAGE_NAME)/$(PACKAGE_NAME).zip $(BUILD_DIR)/
 	@echo "Created '$(BUILD_DIR)/$(PACKAGE_NAME).zip'"
 
 check:
