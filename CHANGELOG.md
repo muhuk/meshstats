@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.3.1] - 2024-11-29
+
+### Fixed
+
+- Fixed ngon visibility errors.  Instead of relying on a centerpoint raycast
+  for ngons, new implementation checks vertices of the ngon for visibility.
+
 ## [1.3] - 2023-09-23
 
 ### Changed
@@ -98,7 +105,8 @@
 - Allow enabling & disabling the overlay.  This setting is saved with the
   scene.
 
-[unreleased]: https://github.com/muhuk/meshstats/compare/v1.3...HEAD
+[unreleased]: https://github.com/muhuk/meshstats/compare/v1.3.1...HEAD
+[1.3.1]: https://github.com/muhuk/meshstats/compare/v1.3...v1.3.1
 [1.3]: https://github.com/muhuk/meshstats/compare/v1.2...v1.3
 [1.2]: https://github.com/muhuk/meshstats/compare/v1.1...v1.2
 [1.1]: https://github.com/muhuk/meshstats/compare/v1.0...v1.1
