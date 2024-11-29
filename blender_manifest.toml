@@ -10,7 +10,7 @@ website = "https://github.com/muhuk/meshstats"
 
 tags = ["Mesh", "Modeling"]
 
-blender_version_min = "3.6.2"
+blender_version_min = "4.2.2"
 # blender_version_max = "5.1.0"
 
 license = [
