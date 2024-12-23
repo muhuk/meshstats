@@ -23,8 +23,8 @@ if "bpy" in locals():
 else:
     import typing
     import bpy
-    from meshstats import context as meshstats_context
-    from meshstats import (icon, mesh)
+    from . import context as meshstats_context
+    from . import (icon, mesh)
 
 
 class MeshstatsPanel(bpy.types.Panel):

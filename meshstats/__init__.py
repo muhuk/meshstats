@@ -22,7 +22,7 @@ if "bpy" in locals():
         importlib.reload(mod)
 else:
     import bpy
-    from meshstats import (
+    from . import (
         icon,
         mesh,
         ops,
@@ -30,19 +30,6 @@ else:
         props,
         ui
     )
-
-
-bl_info = {
-    "name": "meshstats",
-    "description": "Mesh statistics.",
-    "author": "Atamert Ölçgen",
-    "version": (1, 3, 2),
-    "blender": (4, 2, 2),
-    "location": "View3D > Meshstats panel",
-    "tracker_url": "https://github.com/muhuk/meshstats",
-    "support": "COMMUNITY",
-    "category": "Mesh"
-}
 
 
 draw_handler = None

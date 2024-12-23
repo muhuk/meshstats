@@ -33,8 +33,8 @@ else:
     import gpu_extras.batch
     import mathutils
     # addon
-    from meshstats import context as meshstats_context
-    from meshstats import (constants, face, mesh, pole)
+    from . import context as meshstats_context
+    from . import (constants, face, mesh, pole)
 
 
 uniform_shader: typing.Optional[gpu.types.GPUShader] = None

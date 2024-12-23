@@ -22,8 +22,8 @@ if "bpy" in locals():
         importlib.reload(mod)
 else:
     import bpy
-    from meshstats import constants
-    from meshstats import ops
+    from . import constants
+    from . import ops
 
 
 class MeshstatsAddonPreferences(bpy.types.AddonPreferences):

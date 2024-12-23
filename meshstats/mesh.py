@@ -36,9 +36,9 @@ else:
     import bpy
     import mathutils
     # addon
-    from meshstats import constants
-    from meshstats import context as meshstats_context
-    from meshstats import (face, pole, props)
+    from . import constants
+    from . import context as meshstats_context
+    from . import (face, pole, props)
 
 
 log = logging.getLogger(__name__)

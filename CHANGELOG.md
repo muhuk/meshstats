@@ -1,5 +1,11 @@
 # Changelog
 
+## [1.3.2] - 2024-12-239509673
+
+### Fixed
+
+- Replaced absolute imports with relative imports.
+
 ## [1.3.1] - 2024-11-29
 
 ### Fixed
@@ -105,7 +111,8 @@
 - Allow enabling & disabling the overlay.  This setting is saved with the
   scene.
 
-[unreleased]: https://github.com/muhuk/meshstats/compare/v1.3.1...HEAD
+[unreleased]: https://github.com/muhuk/meshstats/compare/v1.3.2...HEAD
+[1.3.1]: https://github.com/muhuk/meshstats/compare/v1.3.1...v1.3.2
 [1.3.1]: https://github.com/muhuk/meshstats/compare/v1.3...v1.3.1
 [1.3]: https://github.com/muhuk/meshstats/compare/v1.2...v1.3
 [1.2]: https://github.com/muhuk/meshstats/compare/v1.1...v1.2
